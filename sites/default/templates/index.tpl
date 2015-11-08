@@ -44,8 +44,14 @@
     <header class="main-header">
       <nav class="nav--main">
         <div class="nav--sections">
-          <a class="nav__trigger nav__trigger--sections" href="/db">
-          <span>upper.io.</span>/db</a>
+          <a class="nav__trigger nav__trigger--sections" href="/db"><span>upper.io.</span>/db</a>
+          {{ if .BreadCrumb }}
+            <ul class="breadcrumb">
+              {{ range .BreadCrumb }}
+                <li><a href="{{ asset .link }}">{{ .text }}</a></li>
+              {{ end }}
+            </ul>
+          {{ end }}
         </div>
         <div class="nav--adapters">
           <span class="nav__trigger--adapters" id="adapters-menu-trigger">adapters</span>
@@ -58,7 +64,7 @@
           </ul>
         </div>
       </nav>
-      {{ if .IsHome }}
+      {{ if eq .CurrentPage.URL "/db" }}
         <div class="hero">
           <div class="container">
             <img class="hero__background" src="{{ asset "/images/city.svg" }}" />
@@ -85,24 +91,21 @@
         <div class="nav__trigger--sections__nav" id="sections-menu-trigger">Index</div>
         <div class="sections__nav__block" id="sections-menu">
           <h2 class="sections__nav__title">
-            <a href="#">Mongo</a>
+            {{ range .GetTitlesFromLevel 0 }}
+              <a href="{{ .url }}">{{ .text }}</a>
+            {{ end }}
           </h2>
           <ul>
-            <li>
-              <a href="#known-limitations">Known Limitations</a>
-            </li>
-            <li>
-              <a href="#installation">Installation</a>
-            </li>
-            <li>
-              <a href="#setting-up-database-access">Setting Up Database Access</a>
-            </li>
+          {{ range .GetTitlesFromLevel 1 }}
+            <li><a href="{{ .url }}">{{ .text }}</a></li>
+          {{ end }}
           </ul>
         </div>
       </nav>
+
       <article>
         <div class="container">
-          {{ if .IsHome }}
+          {{ if eq .CurrentPage.URL "/db" }}
             <p class="pressly text-center hidden-extra-small">This project is proudly sponsored by
             <a href="https://www.pressly.com" target="_blank"><img class="vertical-middle logo-pressly" src="{{ asset "images/pressly.png" }}" /></a></p>
             <div class="features grid-3">

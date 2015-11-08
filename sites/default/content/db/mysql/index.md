@@ -1,4 +1,4 @@
-# MySQL adapter for upper.io/db
+# MySQL
 
 The `mysql` adapter for [MySQL][2] wraps the `github.com/go-sql-driver/mysql`
 driver written by [Julien Schmidt][1].

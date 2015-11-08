@@ -1,4 +1,4 @@
-# PostgreSQL adapter for upper.io/db
+# PostgreSQL
 
 The `upper.io/db/postgresql` adapter for [PostgreSQL][2] wraps the
 `github.com/lib/pq` driver written by [Blake Mizerany][1].

@@ -1,4 +1,4 @@
-# QL adapter for upper.io/db
+# QL
 
 The `upper.io/db/ql` adapter for the [QL][1] wraps the `github.com/cznic/ql/ql`
 driver written by [Jan Mercl][1].

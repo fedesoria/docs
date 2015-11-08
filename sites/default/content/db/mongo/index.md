@@ -1,4 +1,4 @@
-# MongoDB adapter for upper.io/db
+# MongoDB
 
 The `mongo` adapter for [MongoDB][3] wraps the `labix.org/v2/mgo` driver
 written by [Gustavo Niemeyer][1].

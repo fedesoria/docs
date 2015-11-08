@@ -1,4 +1,4 @@
-# SQLite adapter for upper.io/db
+# SQLite
 
 The `upper.io/db/sqlite` adapter for the [SQLite3][3] wraps the
 `github.com/mattn/go-sqlite3` driver written by [Yasuhiro Matsumoto][1].
