@@ -25,6 +25,7 @@
     <link rel="stylesheet" href="{{ asset "/css/poole.css" }}">
     <link rel="stylesheet" href="{{ asset "/css/syntax.css" }}">
     <link rel="stylesheet" href="{{ asset "/css/hyde.css" }}">
+    <link rel="stylesheet" href="{{ asset "/css/upper.css" }}">
 
     <!-- External fonts -->
     <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
@@ -43,6 +44,19 @@
     <link rel="stylesheet" href="{{ asset "/css/luminos.css" }}">
     <script src="{{asset "js/main.js"}}"></script>
 
+    <meta name="go-import" content="upper.io/db git https://github.com/upper/db">
+    <meta name="go-import" content="upper.io/builder git https://github.com/upper/builder">
+    <!-- <meta name="x-go-import" content="upper.io/v1/db git https://github.com/upper/db.v1"> -->
+    <!-- <meta name="x-go-import" content="upper.io/v2/db git https://github.com/upper/db.v2"> -->
+
+    <meta name="go-import" content="upper.io/queue git https://github.com/upper/queue">
+    <meta name="go-import" content="upper.io/ground git https://github.com/upper/ground">
+    <meta name="go-import" content="upper.io/bridge git https://github.com/upper/bridge">
+    <meta name="go-import" content="upper.io/db-misc git https://github.com/upper/db-misc">
+    <meta name="go-import" content="upper.io/cache git https://github.com/upper/cache">
+    <meta name="go-import" content="upper.io/patterns git https://github.com/upper/patterns">
+    <meta name="go-import" content="upper.io/i git https://github.com/upper/i">
+    <meta name="go-import" content="upper.io/bond git https://github.com/upper/bond">
 
   </head>
 
@@ -56,20 +70,15 @@
         {{ if settings "page/body/menu_pull" }}
           <ul class="nav nav-tabs">
           {{ range settings "page/body/menu_pull" }}
-            <li><a href="{{ asset .URL }}">{{ .Text }}</a></li>
+            <li><a href="{{ .link }}">{{ .text }}</a></li>
           {{ end }}
           </ul>
         {{ end }}
 
         <div class="sidebar-about">
           <div class="logo">
-            <a href="/">
-              <!--
-              Icon made by OCHA (http://www.unocha.org) from www.flaticon.com
-              is licensed under CC BY 3.0
-              (http://creativecommons.org/licenses/by/3.0/)
-              -->
-              <img src="{{ asset "/images/logo.svg" }}" width="128" height="128" />
+            <a href="{{ asset "/" }}">
+              <img src="{{ asset "images/icon.svg" }}" width="128" height="128" title="The upper.io icon is based on an original icon by Freepik, licensed under Creative Commons BY 3.0" />
             </a>
           </div>
           <h1>
@@ -83,17 +92,17 @@
         <nav class="sidebar-nav">
           {{ if .IsHome }}
             {{ range settings "page/body/menu" }}
-              <a class="sidebar-nav-item" href="{{ asset .URL }}">{{ .Text }}</a>
+              <a class="sidebar-nav-item" href="{{ .link }}">{{ .text }}</a>
             {{ end }}
 
           {{ else }}
             {{ if .SideMenu }}
               {{ range .SideMenu }}
-                <a class="sidebar-nav-item" href="{{ asset .URL }}">{{ .Text }}</a>
+                <a class="sidebar-nav-item" href="{{ .link }}">{{ .text }}</a>
               {{ end }}
             {{ else }}
               {{ range settings "page/body/menu" }}
-                <a class="sidebar-nav-item" href="{{ asset .URL }}">{{ .Text }}</a>
+                <a class="sidebar-nav-item" href="{{ .link }}">{{ .text }}</a>
               {{ end }}
             {{ end }}
           {{ end }}
@@ -107,7 +116,7 @@
             <div class="collapse navbar-collapse">
               <ul class="nav navbar-nav">
               {{ range settings "page/body/menu" }}
-                <li><a href="{{ asset .URL }}">{{ .Text }}</a></li>
+                <li><a href="{{ .link }}">{{ .text }}</a></li>
               {{ end }}
               </ul>
             </div>
@@ -123,7 +132,7 @@
         {{ if .BreadCrumb }}
           <ul class="breadcrumb">
             {{ range .BreadCrumb }}
-              <li><a href="{{ asset .URL }}">{{ .Text }}</a></li>
+              <li><a href="{{ asset .link }}">{{ .text }}</a></li>
             {{ end }}
           </ul>
         {{ end }}
@@ -140,13 +149,13 @@
       {{ else }}
 
         {{ if .CurrentPage }}
-          <h1>{{ .CurrentPage.Text }}</h1>
+          <h1>{{ .CurrentPage.text }}</h1>
         {{ end }}
 
         <ul>
           {{ range .SideMenu }}
             <li>
-              <a href="{{ asset .URL }}">{{ .Text }}</a>
+              <a href="{{ asset .link }}">{{ .text }}</a>
             </li>
           {{ end }}
         </ul>
@@ -154,14 +163,14 @@
       {{end}}
 
       {{ if setting "page/body/copyright" }}
-        <p>{{ setting "page/body/copyright" | html }}</p>
+        <p>{{ setting "page/body/copyright" | htmltext }}</p>
       {{ end }}
 
     </div>
 
   {{ if setting "page/body/scripts/footer" }}
     <script type="text/javascript">
-      {{ setting "page/body/scripts/footer" | js }}
+      {{ setting "page/body/scripts/footer" | jstext }}
     </script>
   {{ end }}
 
