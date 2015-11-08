@@ -1,0 +1,32 @@
+# Configuration file for Luminos.     http://luminos.menteslibres.org
+#
+# You are viewing a YAML formatted file, read more about the format
+# at http://www.yaml.org.
+#
+# Note: Use two space indentations instead of the \t character.
+#
+#
+
+page:
+  # Name of the site.
+  brand: "Luminos"
+
+  # Some properties for <head>.
+  head:
+    # Title that appears on the <title> tag.
+    title: "Luminos markdown server."
+
+  # Some properties for <body>.
+  body:
+    # Page subtitle.
+    title: "Markdown server"
+
+    # Top navigation bar.
+    menu:
+      - { text: "Getting started with Luminos", url: "https://menteslibres.net/luminos/getting-started" }
+
+    # Top-right navigation helper.
+    menu_pull:
+      - { text: "Home", url: "/" }
+
+    copyright: "&copy; 2012-2014. J. Carlos Nieto."
