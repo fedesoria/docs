@@ -1,14 +1,13 @@
 # MongoDB adapter for upper.io/db
 
-The `mongo` adapter for [MongoDB][3] wraps the `labix.org/v2/mgo`
-driver by [Gustavo Niemeyer][1].
-
-This adapter supports CRUD but does not currently supports transactions.
+The `mongo` adapter for [MongoDB][3] wraps the `labix.org/v2/mgo` driver
+written by [Gustavo Niemeyer][1].
 
 ## Known limitations
 
 * Does not support transactions.
 * Does not support the `db` tag. You must use [bson][4] tags instead.
+* Does not support query builder.
 
 ## Installation
 
@@ -29,7 +28,7 @@ go get upper.io/db/mongo
 
 ## Setting up database access
 
-The `mongo.ConnectionURL{}` struct is defined like this:
+The `mongo.ConnectionURL{}` struct is defined as follows:
 
 ```go
 // ConnectionURL implements a MongoDB connection struct.
@@ -59,7 +58,7 @@ You may use `mongo.ConnectionURL` as argument for `db.Open()`.
 To use this adapter, import `upper.io/db` and the `upper.io/db/mongo` packages.
 
 ```go
-# main.go
+// main.go
 package main
 
 import (
@@ -95,6 +94,7 @@ import (
   "fmt"
   "log"
   "time"
+
   "upper.io/db"         // Imports the main db package.
   "upper.io/db/mongo"   // Imports the mongo adapter.
 )
@@ -105,9 +105,11 @@ var settings = mongo.ConnectionURL{
 }
 
 type Birthday struct {
-  // Maps the "Name" property to the "name" column of the "birthday" table.
+  // Maps the "Name" property to the "name" column
+  // of the "birthday" table.
   Name string `bson:"name"`
-  // Maps the "Born" property to the "born" column of the "birthday" table.
+  // Maps the "Born" property to the "born" column
+  // of the "birthday" table.
   Born time.Time `bson:"born"`
 }
 
@@ -171,7 +173,11 @@ func main() {
 
   // Printing to stdout.
   for _, birthday := range birthday {
-    fmt.Printf("%s was born in %s.\n", birthday.Name, birthday.Born.Format("January 2, 2006"))
+    fmt.Printf(
+      "%s was born in %s.\n",
+      birthday.Name,
+      birthday.Born.Format("January 2, 2006"),
+    )
   }
 
 }
@@ -193,20 +199,19 @@ Hironobu Sakaguchi was born in November 25, 1962.
 
 ## Custom ID Setter
 
-This driver implements the canonical [IDSetter][5] interface but it also
-implements the more specific [ObjectIdIDSetter][6] that you could use with an
-struct like this:
+This driver implements the [IDSetter][5] interface but it also implements the
+more specific [mongo.ObjectIdIDSetter][6] that you can use with an struct like this:
 
 ```go
 type artistWithObjectIdKey struct {
-	id   bson.ObjectId
-	Name string
+  id   bson.ObjectId
+  Name string
 }
 
 // This SetID() will be called after a successful Append().
 func (artist *artistWithObjectIdKey) SetID(id bson.ObjectId) error {
-	artist.id = id
-	return nil
+  artist.id = id
+  return nil
 }
 ```
 
@@ -216,4 +221,3 @@ func (artist *artistWithObjectIdKey) SetID(id bson.ObjectId) error {
 [4]: http://labix.org/gobson
 [5]: http://godoc.org/upper.io/db#IDSetter
 [6]: http://godoc.org/upper.io/db/mongo#ObjectIdIDSetter
-

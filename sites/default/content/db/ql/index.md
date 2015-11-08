@@ -1,7 +1,7 @@
 # QL adapter for upper.io/db
 
-The `upper.io/db/ql` adapter for the [QL][1] is a wrapper of the
-`github.com/cznic/ql/ql` driver by [Jan Mercl][1].
+The `upper.io/db/ql` adapter for the [QL][1] wraps the `github.com/cznic/ql/ql`
+driver written by [Jan Mercl][1].
 
 ## Installation
 
@@ -23,7 +23,8 @@ type ConnectionURL struct {
 }
 ```
 
-Alternatively, a `ql.ParseURL()` function is provided:
+Alternatively, a `ql.ParseURL()` function is provided to convert a string into
+a `ql.ConnectionURL`:
 
 ```go
 // ParseURL parses s into a ConnectionURL struct.
@@ -101,9 +102,11 @@ var settings = ql.ConnectionURL{
 }
 
 type Birthday struct {
-  // Maps the "Name" property to the "name" column of the "birthday" table.
+  // Maps the "Name" property to the "name" column
+  // of the "birthday" table.
   Name string `db:"name"`
-  // Maps the "Born" property to the "born" column of the "birthday" table.
+  // Maps the "Born" property to the "born" column
+  // of the "birthday" table.
   Born time.Time `db:"born"`
 }
 
@@ -166,7 +169,10 @@ func main() {
 
   // Printing to stdout.
   for _, birthday := range birthday {
-    fmt.Printf("%s was born in %s.\n", birthday.Name, birthday.Born.Format("January 2, 2006"))
+    fmt.Printf("%s was born in %s.\n",
+      birthday.Name,
+      birthday.Born.Format("January 2, 2006"),
+    )
   }
 
 }
@@ -187,79 +193,36 @@ Nobuo Uematsu was born in March 21, 1959.
 Hironobu Sakaguchi was born in November 25, 1962.
 ```
 
-### Raw SQL
+## Unique adapter features
 
-Sometimes you'll need to run complex SQL queries with joins and database
-specific magic, there is an extra package `sqlutil` that you could use in this
-situation:
+### SQL builder
 
-```go
-import "upper.io/db/util/sqlutil"
-```
-
-This is an example for `sqlutil.FetchRows`:
+You can use que query builder for any complex SQL query:
 
 ```go
-  var sess db.Database
-  var rows *sql.Rows
-  var err error
-  var drv *sql.DB
+q := b.Select(
+    "p.id",
+    "p.title AD publication_title",
+    "a.name AS artist_name",
+  ).From("artists AS a", "publication AS p").
+  Where("a.id = p.author_id")
 
-  type publication_t struct {
-    Id       int64  `db:"id,omitempty"`
-    Title    string `db:"title"`
-    AuthorId int64  `db:"author_id"`
-  }
+iter := q.Iterator()
 
-  if sess, err = db.Open(Adapter, settings); err != nil {
-    t.Fatal(err)
-  }
+var publications []Publication
 
-  defer sess.Close()
-
-  drv = sess.Driver().(*sql.DB)
-
-  rows, err = drv.Query(`
-    SELECT
-      p.id,
-      p.title AS publication_title,
-      a.name AS artist_name
-    FROM
-      artist AS a,
-      publication AS p
-    WHERE
-      a.id = p.author_id
-  `)
-
-  if err != nil {
-    t.Fatal(err)
-  }
-
-  var all []publication_t
-
-  // Mapping to an array.
-  if err = sqlutil.FetchRows(rows, &all); err != nil {
-    t.Fatal(err)
-  }
-
-  if len(all) != 9 {
-    t.Fatalf("Expecting some rows.")
-  }
+if err = iter.All(&publications); err != nil {
+  log.Fatal(err)
+}
 ```
-
-You can also use `sqlutil.FetchRow(*sql.Rows, interface{})` for mapping results
-obtained from `sql.DB.Query()` calls to a pointer of a single struct instead of
-a pointer to an array of structs. Please note that there is no support for
-`sql.DB.QueryRow()` and that you must provide a `*sql.Rows` value to both
-`sqlutil.FetchRow()` and `sqlutil.FetchRows()`.
 
 ### Using `db.Raw` and `db.Func`
 
 If you need to provide a raw parameter for a method you can use the `db.Raw`
-type. Plese note that raw means that the specified value won't be filtered:
+function. Plese note that raw means that the specified value won't be filtered:
 
 ```go
-res = sess.Find().Select(db.Raw{`DISTINCT(name)`})
+res = sess.Find().Select(db.Raw("DISTINCT(name)"))
 ```
 
 `db.Raw` also works for condition values.
@@ -268,7 +231,7 @@ Another useful type that you could use to create an equivalent statement is
 `db.Func`:
 
 ```go
-res = sess.Find().Select(db.Func{`DISTINCT`, `name`})
+res = sess.Find().Select(db.Func("DISTINCT", "name"))
 ```
 
 [1]: https://github.com/cznic/ql

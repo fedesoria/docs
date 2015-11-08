@@ -3,9 +3,6 @@
 The `mysql` adapter for [MySQL][2] wraps the `github.com/go-sql-driver/mysql`
 driver written by [Julien Schmidt][1].
 
-This adapter supports basic CRUD queries, transactions, simple join queries and
-raw SQL.
-
 ## Installation
 
 Use `go get` to download and install the adapter:
@@ -16,7 +13,7 @@ go get upper.io/db/mysql
 
 ## Setting up database access
 
-The `mysql.ConnectionURL{}` struct is defined like this:
+The `mysql.ConnectionURL{}` struct is defined as follows:
 
 ```go
 // ConnectionURL implements a MySQL connection struct.
@@ -29,24 +26,23 @@ type ConnectionURL struct {
 }
 ```
 
-The `db.Address` interface can be satisfied by the `db.Host()`,
-`db.HostPort()` or `db.Socket()` functions.
+The `db.Address` interface can be satisfied by the `db.Host()`, `db.HostPort()`
+or `db.Socket()` functions.
 
-Alternatively, a `mysql.ParseURL()` function is provided:
+Alternatively, a `mysql.ParseURL()` function is provided to convert a string
+into a `mysql.ConnectionURL`:
 
 ```go
 // ParseURL parses s into a ConnectionURL struct.
 mysql.ParseURL(s string) (ConnectionURL, error)
 ```
 
-You may use `mysql.ConnectionURL` as argument for `db.Open()`.
-
 ## Usage
 
 To use this adapter, import `upper.io/db` and the `upper.io/db/mysql` packages.
 
 ```go
-# main.go
+// main.go
 package main
 
 import (
@@ -106,16 +102,18 @@ import (
 )
 
 var settings = mysql.ConnectionURL{
-  Database: `upperio_tests`,                            // Database name
-  Address:   db.Socket(`/var/run/mysqld/mysqld.sock`),  // Using unix sockets.
-  User:     `upperio`,                                  // Database username.
-  Password: `upperio`,                                  // Database password.
+  Database: `upperio_tests`,
+  Address:  db.ParseAddress(`127.0.0.1`),
+  User:     `upperio`,
+  Password: `upperio`,
 }
 
 type Birthday struct {
-  // Maps the "Name" property to the "name" column of the "birthday" table.
+  // Maps the "Name" property to the "name" column
+  // of the "birthday" table.
   Name string `db:"name"`
-  // Maps the "Born" property to the "born" column of the "birthday" table.
+  // Maps the "Born" property to the "born" column
+  // of the "birthday" table.
   Born time.Time `db:"born"`
 }
 
@@ -178,7 +176,10 @@ func main() {
 
   // Printing to stdout.
   for _, birthday := range birthday {
-    fmt.Printf("%s was born in %s.\n", birthday.Name, birthday.Born.Format("January 2, 2006"))
+    fmt.Printf("%s was born in %s.\n",
+      birthday.Name,
+      birthday.Born.Format("January 2, 2006"),
+    )
   }
 
 }
@@ -190,7 +191,7 @@ Running the example above:
 go run main.go
 ```
 
-Expected output:
+gives the following output:
 
 ```
 Hayao Miyazaki was born in January 5, 1941.
@@ -200,51 +201,26 @@ Hironobu Sakaguchi was born in November 25, 1962.
 
 ## Unique adapter features
 
-### Simple JOIN queries
+### SQL builder
 
-Querying from multiple tables is possible using `db.Database.Collection()`,
-just pass the name of all the tables separating them by commas. You can also
-use the `AS` keyword to define an alias that you could later use in conditions
-to refer to the original table.
+You can use que query builder for any complex SQL query:
 
-```
-var err error
-var artistPublication db.Collection
+```go
+q := b.Select(
+    "p.id",
+    "p.title AD publication_title",
+    "a.name AS artist_name",
+  ).From("artists AS a", "publication AS p").
+  Where("a.id = p.author_id")
 
-// Querying from two tables.
-artistPublication, err = sess.Collection(`artist AS a`, `publication AS p`)
+iter := q.Iterator()
 
-if err != nil {
-  log.Fatal(err)
-}
+var publications []Publication
 
-res := artistPublication.Find(
-  // Use db.Raw{} to enclose statements that you'd like to pass without
-  // filtering.
-  db.Raw{`a.id = p.author_id`},
-).Select(
-  `p.id`, // We defined "p" as an alias for "publication".
-  `p.title as publication_title`, // The "AS" is recognized as column alias.
-  db.Raw{`a.name AS artist_name`},
-)
-
-type artistPublication_t struct {
-  ID               int64  `db:"id"`
-  PublicationTitle string `db:"publication_title"`
-  ArtistName       string `db:"artist_name"`
-}
-
-all := []artistPublication_t{}
-
-if err = res.All(&all); err != nil {
+if err = iter.All(&publications); err != nil {
   log.Fatal(err)
 }
 ```
-
-If you're working with more than one collection, the first one you pass becomes
-your primary collection. Calls to `db.Collection.Append()`,
-`db.Collection.Remove()` and `db.Collection.Update()` will be performed on your
-primary collection.
 
 ### Auto-incremental keys
 
@@ -258,8 +234,7 @@ CREATE TABLE foo(
 );
 ```
 
-Also, you must provide the `omitempty` option in the `db` tag when defining the
-struct:
+Remember to set the `omitempty` option to the ID field:
 
 ```go
 type Foo struct {
@@ -268,83 +243,13 @@ type Foo struct {
 }
 ```
 
-In order for the ID to be returned by `db.Collection.Append()`, the primary key
-must be named "id", this is a known limitation that will be fixed on future
-releases.
-
-### Raw SQL
-
-Sometimes you'll need to run complex SQL queries with joins and database
-specific magic, there is an extra package `sqlutil` that you could use in this
-situation:
-
-```go
-import "upper.io/db/util/sqlutil"
-```
-
-This is an example for `sqlutil.FetchRows`:
-
-```go
-  var sess db.Database
-  var rows *sql.Rows
-  var err error
-  var drv *sql.DB
-
-  type publication_t struct {
-    ID       int64  `db:"id,omitempty"`
-    Title    string `db:"title"`
-    AuthorID int64  `db:"author_id"`
-  }
-
-  if sess, err = db.Open(Adapter, settings); err != nil {
-    t.Fatal(err)
-  }
-
-  defer sess.Close()
-
-  drv = sess.Driver().(*sql.DB)
-
-  rows, err = drv.Query(`
-    SELECT
-      p.id,
-      p.title AS publication_title,
-      a.name AS artist_name
-    FROM
-      artist AS a,
-      publication AS p
-    WHERE
-      a.id = p.author_id
-  `)
-
-  if err != nil {
-    t.Fatal(err)
-  }
-
-  var all []publication_t
-
-  // Mapping to an array.
-  if err = sqlutil.FetchRows(rows, &all); err != nil {
-    t.Fatal(err)
-  }
-
-  if len(all) != 9 {
-    t.Fatalf("Expecting some rows.")
-  }
-```
-
-You can also use `sqlutil.FetchRow(*sql.Rows, interface{})` for mapping results
-obtained from `sql.DB.Query()` calls to a pointer of a single struct instead of
-a pointer to an array of structs. Please note that there is no support for
-`sql.DB.QueryRow()` and that you must provide a `*sql.Rows` value to both
-`sqlutil.FetchRow()` and `sqlutil.FetchRows()`.
-
 ### Using `db.Raw` and `db.Func`
 
 If you need to provide a raw parameter for a method you can use the `db.Raw`
-type. Plese note that raw means that the specified value won't be filtered:
+function. Plese note that raw means that the specified value won't be filtered:
 
 ```go
-res = sess.Find().Select(db.Raw{`DISTINCT(name)`})
+res = sess.Find().Select(db.Raw("DISTINCT(name)"))
 ```
 
 `db.Raw` also works for condition values.
@@ -353,7 +258,7 @@ Another useful type that you could use to create an equivalent statement is
 `db.Func`:
 
 ```go
-res = sess.Find().Select(db.Func{`DISTINCT`, `name`})
+res = sess.Find().Select(db.Func("DISTINCT", "name"))
 ```
 
 [1]: https://github.com/go-sql-driver/mysql
