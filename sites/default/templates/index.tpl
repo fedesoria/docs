@@ -1,14 +1,11 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
-
+<html>
   <head>
-    <link href="http://gmpg.org/xfn/11" rel="profile">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta http-equiv="content-type" content="text/html; charset=utf-8">
-
-    <!-- Enable responsiveness on mobile devices-->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
-
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <link href="https://fonts.googleapis.com/css?family=Raleway:500,700|Source+Serif+Pro:400,700|Source+Code+Pro:400,600" rel="stylesheet" type="text/css" />
+    <link href="{{ asset "/css/style.css" }}" rel="stylesheet" />
+    <link href="{{ asset "/css/syntax.css" }}" rel="stylesheet">
     <title>
       {{ if .IsHome }}
         {{ setting "page/head/title" }}
@@ -20,18 +17,6 @@
         {{ end }}
       {{ end }}
     </title>
-
-    <!-- CSS -->
-    <link rel="stylesheet" href="{{ asset "/css/poole.css" }}">
-    <link rel="stylesheet" href="{{ asset "/css/syntax.css" }}">
-    <link rel="stylesheet" href="{{ asset "/css/hyde.css" }}">
-    <link rel="stylesheet" href="{{ asset "/css/upper.css" }}">
-
-    <!-- External fonts -->
-    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
-    <link href="//fonts.googleapis.com/css?family=Open+Sans:300,400italic,400,600,700|Abril+Fatface" rel="stylesheet" type="text/css">
-
-    <!-- Icons -->
     <link rel="apple-touch-icon-precomposed" sizes="144x144" href="{{ asset "/apple-touch-icon-precomposed.png" }}">
     <link rel="shortcut icon" href="{{ asset "/favicon.ico"}}">
 
@@ -40,14 +25,10 @@
     <script src="//menteslibres.net/static/highlightjs/highlight.pack.js?v0000"></script>
     <script>hljs.initHighlightingOnLoad();</script>
 
-    <!-- Luminos -->
-    <link rel="stylesheet" href="{{ asset "/css/luminos.css" }}">
     <script src="{{asset "js/main.js"}}"></script>
 
     <meta name="go-import" content="upper.io/db git https://github.com/upper/db">
     <meta name="go-import" content="upper.io/builder git https://github.com/upper/builder">
-    <!-- <meta name="x-go-import" content="upper.io/v1/db git https://github.com/upper/db.v1"> -->
-    <!-- <meta name="x-go-import" content="upper.io/v2/db git https://github.com/upper/db.v2"> -->
 
     <meta name="go-import" content="upper.io/queue git https://github.com/upper/queue">
     <meta name="go-import" content="upper.io/ground git https://github.com/upper/ground">
@@ -57,122 +38,136 @@
     <meta name="go-import" content="upper.io/patterns git https://github.com/upper/patterns">
     <meta name="go-import" content="upper.io/i git https://github.com/upper/i">
     <meta name="go-import" content="upper.io/bond git https://github.com/upper/bond">
-
   </head>
 
   <body>
-
-    <!-- sidebar -->
-    <div class="sidebar">
-
-      <div class="container">
-
-        {{ if settings "page/body/menu_pull" }}
-          <ul class="nav nav-tabs">
-          {{ range settings "page/body/menu_pull" }}
-            <li><a href="{{ .link }}">{{ .text }}</a></li>
-          {{ end }}
-          </ul>
-        {{ end }}
-
-        <div class="sidebar-about">
-          <div class="logo">
-            <a href="{{ asset "/" }}">
-              <img src="{{ asset "images/icon.svg" }}" width="128" height="128" title="The upper.io icon is based on an original icon by Freepik, licensed under Creative Commons BY 3.0" />
-            </a>
-          </div>
-          <h1>
-            <a href="{{ asset "/" }}">
-              {{ setting "page/brand" }}
-            </a>
-          </h1>
-          <p class="lead">{{ setting "page/body/title" }}</p>
+    <header class="main-header">
+      <nav class="nav--main">
+        <div class="nav--sections">
+          <a class="nav__trigger nav__trigger--sections" href="/db">
+          <span>upper.io.</span>/db</a>
         </div>
-
-        <nav class="sidebar-nav">
+        <div class="nav--adapters">
+          <span class="nav__trigger--adapters" id="adapters-menu-trigger">adapters</span>
+          <ul id="adapters-menu">
+            <li><a href="/db/postgresql">PostgreSQL</a></li>
+            <li><a href="/db/mysql">MySQL</a></li>
+            <li><a href="/db/sqlite">SQLite</a></li>
+            <li><a href="/db/ql">QL</a></li>
+            <li><a href="/db/mongo">MongoDB</a></li>
+          </ul>
+        </div>
+      </nav>
+      {{ if .IsHome }}
+        <div class="hero">
+          <div class="container">
+            <img class="hero__background" src="{{ asset "/images/city.svg" }}" />
+            <div class="hero__info">
+              <img class="hero__gopher" src="{{ asset "/images/gopher.svg" }}" />
+              <h1 class="hero__title">
+                <a href="/">
+                  <img src="{{ asset "/images/logo.svg" }}" />
+                  <span>upper.io/db</span>
+                </a>
+              </h1>
+              <p class="hero__description">A Package for
+              <strong>Go</strong>which provides a common interface for interacting with different data sources*</p>
+            </div>
+            <div class="github">
+              <a class="github__icon" target="_blank" href="https://github.com/upper/db">Check the project on github</a>
+            </div>
+          </div>
+        </div>
+      {{ end }}
+    </header>
+    <main>
+      <nav class="sections__nav">
+        <div class="nav__trigger--sections__nav" id="sections-menu-trigger">Index</div>
+        <div class="sections__nav__block" id="sections-menu">
+          <h2 class="sections__nav__title">
+            <a href="#">Mongo</a>
+          </h2>
+          <ul>
+            <li>
+              <a href="#known-limitations">Known Limitations</a>
+            </li>
+            <li>
+              <a href="#installation">Installation</a>
+            </li>
+            <li>
+              <a href="#setting-up-database-access">Setting Up Database Access</a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+      <article>
+        <div class="container">
           {{ if .IsHome }}
-            {{ range settings "page/body/menu" }}
-              <a class="sidebar-nav-item" href="{{ .link }}">{{ .text }}</a>
-            {{ end }}
-
-          {{ else }}
-            {{ if .SideMenu }}
-              {{ range .SideMenu }}
-                <a class="sidebar-nav-item" href="{{ .link }}">{{ .text }}</a>
-              {{ end }}
-            {{ else }}
-              {{ range settings "page/body/menu" }}
-                <a class="sidebar-nav-item" href="{{ .link }}">{{ .text }}</a>
-              {{ end }}
-            {{ end }}
-          {{ end }}
-        </nav>
-
-      </div>
-
-      {{ if not .IsHome }}
-        {{ if .SideMenu }}
-          {{ if settings "page/body/menu" }}
-            <div class="collapse navbar-collapse">
-              <ul class="nav navbar-nav">
-              {{ range settings "page/body/menu" }}
-                <li><a href="{{ .link }}">{{ .text }}</a></li>
-              {{ end }}
-              </ul>
+            <p class="pressly text-center hidden-extra-small">This project is proudly sponsored by
+            <a href="https://www.pressly.com" target="_blank"><img class="vertical-middle logo-pressly" src="{{ asset "images/pressly.png" }}" /></a></p>
+            <div class="features grid-3">
+              <div class="feature">
+                <h2 class="feature__title">Is upper.io/db an ORM?</h2>
+                <p class="feature__description">
+                  Yes, a very basic one, but it&#226;&#8364;&#8482;s not tyrannical* it just abstracts the most common operations you may need when working with database management systems and lets you focus on designing the complex tasks.
+                </p>
+                <img class="feature__icon" src="{{ asset "images/figure-01.svg" }}" />
+              </div>
+              <div class="feature">
+                <h2 class="feature__title">What's the idea behind it?</h2>
+                <p class="feature__description">
+                  The main concept behind upper.io/db centers around subsets of items from a collection, which is a set of items that have properties. These properties may be fixed (SQL tables) or flexible (NoSQL collections). Once you have a collection reference (db.Collection) you can use the Find() method on it to delimit the subset.
+                </p>
+                <img class="feature__icon" src="{{ asset "images/figure-02.svg" }}" />
+              </div>
+              <div class="feature">
+                <h2 class="feature__title">A quick usage example</h2>
+                <p class="feature__description">
+                  This is a syntax example in which col is a value that satisfies db.Collection, person is an array of an user-defined struct and res satisfies db.Result:
+                </p>
+                <img class="feature__icon" src="{{ asset "images/figure-03.svg" }}" />
+              </div>
             </div>
           {{ end }}
-        {{ end }}
-      {{ end }}
+          <section id="get-started">
 
-    </div>
+            {{ if .Content }}
 
-    <div class="content container">
+              {{ .ContentHeader }}
 
-      {{ if not .IsHome }}
-        {{ if .BreadCrumb }}
-          <ul class="breadcrumb">
-            {{ range .BreadCrumb }}
-              <li><a href="{{ asset .link }}">{{ .text }}</a></li>
+              {{ .Content }}
+
+              {{ .ContentFooter }}
+
+            {{ else }}
+
+              {{ if .CurrentPage }}
+                <h1>{{ .CurrentPage.text }}</h1>
+              {{ end }}
+
+              <ul>
+                {{ range .SideMenu }}
+                  <li>
+                    <a href="{{ asset .link }}">{{ .text }}</a>
+                  </li>
+                {{ end }}
+              </ul>
+
+            {{end}}
+
+            {{ if setting "page/body/copyright" }}
+              <p>{{ setting "page/body/copyright" | htmltext }}</p>
             {{ end }}
-          </ul>
-        {{ end }}
-      {{ end }}
 
-      {{ if .Content }}
-
-        {{ .ContentHeader }}
-
-        {{ .Content }}
-
-        {{ .ContentFooter }}
-
-      {{ else }}
-
-        {{ if .CurrentPage }}
-          <h1>{{ .CurrentPage.text }}</h1>
-        {{ end }}
-
-        <ul>
-          {{ range .SideMenu }}
-            <li>
-              <a href="{{ asset .link }}">{{ .text }}</a>
-            </li>
-          {{ end }}
-        </ul>
-
-      {{end}}
-
-      {{ if setting "page/body/copyright" }}
-        <p>{{ setting "page/body/copyright" | htmltext }}</p>
-      {{ end }}
-
-    </div>
-
-  {{ if setting "page/body/scripts/footer" }}
-    <script type="text/javascript">
-      {{ setting "page/body/scripts/footer" | jstext }}
-    </script>
-  {{ end }}
-
+          </section>
+        </div>
+      </article>
+    </main>
+    <script src="js/app.js"></script>
+    {{ if setting "page/body/scripts/footer" }}
+      <script type="text/javascript">
+        {{ setting "page/body/scripts/footer" | jstext }}
+      </script>
+    {{ end }}
   </body>
 </html>
