@@ -1,14 +1,32 @@
 # upper.io docs
 
+## How to install and run
+
 Install [luminos](menteslibres.net/luminos):
 
 ```
-go get -v menteslibres.net/luminos
+make deps
 ```
 
-And then run the server:
+Run the server:
 
 ```
-cd /path/to/docs
-luminos run
+make run
+```
+
+And open 127.0.0.1:9000.
+
+## Directory layout
+
+Some important files and directories:
+
+```sh
+# Main page template
+sites/default/templates/index.tpl
+
+# Web root
+sites/default/webroot
+
+# Markdown files
+sites/default/content
 ```
