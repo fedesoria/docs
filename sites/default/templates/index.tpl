@@ -78,7 +78,7 @@
               <p class="hero__description">The non-magical database mapper that stays out of your way.</p>
             </div>
             <div class="github">
-              <a class="github__icon" target="_blank" href="https://github.com/upper/db">Check the project on github</a>
+              <a class="github__icon" target="_blank" href="https://github.com/upper/db">Check out the project at Github</a>
             </div>
           </div>
         </div>
@@ -107,7 +107,7 @@
 
         <div class="container">
           {{ if eq .CurrentPage.URL "/db" }}
-            <p class="pressly text-center hidden-extra-small">The <code>upper.io/db</code> project is proudly sponsored by
+            <p class="pressly text-center hidden-extra-small">Proudly sponsored by
               <a href="https://www.pressly.com" target="_blank"><img class="vertical-middle logo-pressly" src="{{ asset "images/pressly.png" }}" /></a>
             </p>
             <div class="features grid-3">
@@ -122,6 +122,7 @@
                 <h2 class="feature__title">Code examples</h2>
                 <p class="feature__description">
                   Something amazing.
+                  <a href="/db/examples">Code examples</a>
                 </p>
                 <img class="feature__icon" src="{{ asset "images/figure-02.svg" }}" />
               </div>
@@ -129,6 +130,7 @@
                 <h2 class="feature__title">Contribute</h2>
                 <p class="feature__description">
                   Something amazing.
+                  <a href="/db/contribute">Contribute</a>
                 </p>
                 <img class="feature__icon" src="{{ asset "images/figure-03.svg" }}" />
               </div>
