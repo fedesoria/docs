@@ -70,13 +70,12 @@
             <div class="hero__info">
               <img class="hero__gopher" src="{{ asset "/images/gopher.svg" }}" />
               <h1 class="hero__title">
-                <a href="/">
+                <a href="/db">
                   <img src="{{ asset "/images/logo.svg" }}" />
                   <span>upper.io/db</span>
                 </a>
               </h1>
-              <p class="hero__description">A Package for
-              <strong>Go</strong>which provides a common interface for interacting with different data sources*</p>
+              <p class="hero__description">The non-magical database mapper that stays out of your way.</p>
             </div>
             <div class="github">
               <a class="github__icon" target="_blank" href="https://github.com/upper/db">Check the project on github</a>
@@ -86,84 +85,68 @@
       {{ end }}
     </header>
     <main>
-      <nav class="sections__nav">
-        <div class="nav__trigger--sections__nav" id="sections-menu-trigger">Index</div>
-        <div class="sections__nav__block" id="sections-menu">
-          <h2 class="sections__nav__title">
-            {{ range .GetTitlesFromLevel 0 }}
-              <a href="{{ .url }}">{{ .text }}</a>
-            {{ end }}
-          </h2>
-          <ul>
-          {{ range .GetTitlesFromLevel 1 }}
-            <li><a href="{{ .url }}">{{ .text }}</a></li>
-          {{ end }}
-          </ul>
-        </div>
-      </nav>
 
-      <article>
+        {{ if .Content }}
+          <nav class="sections__nav">
+            <div class="nav__trigger--sections__nav" id="sections-menu-trigger">Index</div>
+            <div class="sections__nav__block" id="sections-menu">
+              <h2 class="sections__nav__title">
+                {{ range .GetTitlesFromLevel 0 }}
+                  <a href="{{ .url }}">{{ .text }}</a>
+                {{ end }}
+              </h2>
+              <ul>
+              {{ range .GetTitlesFromLevel 1 }}
+                <li><a href="{{ .url }}">{{ .text }}</a></li>
+              {{ end }}
+              </ul>
+            </div>
+          </nav>
+          <article>
+        {{ end }}
+
         <div class="container">
           {{ if eq .CurrentPage.URL "/db" }}
-            <p class="pressly text-center hidden-extra-small">This project is proudly sponsored by
-            <a href="https://www.pressly.com" target="_blank"><img class="vertical-middle logo-pressly" src="{{ asset "images/pressly.png" }}" /></a></p>
+            <p class="pressly text-center hidden-extra-small">The <code>upper.io/db</code> project is proudly sponsored by
+              <a href="https://www.pressly.com" target="_blank"><img class="vertical-middle logo-pressly" src="{{ asset "images/pressly.png" }}" /></a>
+            </p>
             <div class="features grid-3">
               <div class="feature">
-                <h2 class="feature__title">Is upper.io/db an ORM?</h2>
+                <h2 class="feature__title">Getting started</h2>
                 <p class="feature__description">
-                  Yes, a very basic one, but it&#226;&#8364;&#8482;s not tyrannical* it just abstracts the most common operations you may need when working with database management systems and lets you focus on designing the complex tasks.
+                  <a href="/db/getting-started">Getting started</a>
                 </p>
                 <img class="feature__icon" src="{{ asset "images/figure-01.svg" }}" />
               </div>
               <div class="feature">
-                <h2 class="feature__title">What's the idea behind it?</h2>
+                <h2 class="feature__title">Code examples</h2>
                 <p class="feature__description">
-                  The main concept behind upper.io/db centers around subsets of items from a collection, which is a set of items that have properties. These properties may be fixed (SQL tables) or flexible (NoSQL collections). Once you have a collection reference (db.Collection) you can use the Find() method on it to delimit the subset.
+                  Something amazing.
                 </p>
                 <img class="feature__icon" src="{{ asset "images/figure-02.svg" }}" />
               </div>
               <div class="feature">
-                <h2 class="feature__title">A quick usage example</h2>
+                <h2 class="feature__title">Contribute</h2>
                 <p class="feature__description">
-                  This is a syntax example in which col is a value that satisfies db.Collection, person is an array of an user-defined struct and res satisfies db.Result:
+                  Something amazing.
                 </p>
                 <img class="feature__icon" src="{{ asset "images/figure-03.svg" }}" />
               </div>
             </div>
-          {{ end }}
-          <section id="get-started">
+          {{ else }}
 
             {{ if .Content }}
-
               {{ .ContentHeader }}
-
               {{ .Content }}
-
               {{ .ContentFooter }}
-
-            {{ else }}
-
-              {{ if .CurrentPage }}
-                <h1>{{ .CurrentPage.text }}</h1>
-              {{ end }}
-
-              <ul>
-                {{ range .SideMenu }}
-                  <li>
-                    <a href="{{ asset .link }}">{{ .text }}</a>
-                  </li>
-                {{ end }}
-              </ul>
-
             {{end}}
 
             {{ if setting "page/body/copyright" }}
               <p>{{ setting "page/body/copyright" | htmltext }}</p>
             {{ end }}
 
-          </section>
+          {{ end }}
         </div>
-      </article>
     </main>
     <script src="js/app.js"></script>
     {{ if setting "page/body/scripts/footer" }}
