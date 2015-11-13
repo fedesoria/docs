@@ -44,7 +44,6 @@
     <header class="main-header">
       <nav class="nav--main">
         <div class="nav--sections">
-          <a class="nav__trigger nav__trigger--sections" href="/db"><span>upper.io.</span>/db</a>
           {{ if .BreadCrumb }}
             <ul class="breadcrumb">
               {{ range .BreadCrumb }}
