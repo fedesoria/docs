@@ -8,42 +8,23 @@ database drivers.
 
 ```go
 import(
-  // The db package.
-  "upper.io/db"
-  // The PostgreSQL adapter.
-  "upper.io/db/postgresql"
+  "upper.io/db"             // main package
+  "upper.io/db/postgresql"  // adapter for PostgreSQL
 )
 ```
 
 As of today, `upper.io/db` supports the [MySQL][13], [PostgreSQL][14],
-[SQLite][15] and [QL][16] database management systems and provides partial
-support for [MongoDB][17].
+[SQLite][15] and [QL][16] DBMSs and provides partial support for [MongoDB][17].
 
-This is the documentation site of `upper.io/db`, if you're looking for the
-[source code repository][7] you may find it at [github][7].
-
-## An introduction to `upper.io/db`
-
-### Is `upper.io/db` an ORM?
-
-Yes, **a very basic one**. `upper.io/db` is *not* tyrannical in the sense it
-does not impose any opinion on how structures should be written nor provides
-automatic table creation, migrations, index management or any additional magic
-that the developer probably knows better; it just abstracts the most common
-operations you use when working with database management systems and lets you
-focus on designing the complex tasks. Whenever you need to do some complicated
-database query **you'll have to do it by hand**, so having a good understanding
-of the database you're working on is essential.
+## Introduction
 
 ### What's the idea behind `upper.io/db`?
 
-![Database](/db/res/database.png)
+`db` centers around the concept of sets. In the SQL world, a single table can
+have many elements (rows) that share the same basic structure, so when we talk
+about sets we refer to specific rows on that table.
 
-A database is represented as a [db.Database][18] interface, collections (SQL
-tables) are represented as [db.Collection][19] interfaces and items may be
-represented as user-defined structs or maps of type `map[string]interface{}`.
-We recommend you using structs as they provide a more solid framework to work
-on, maps may come in handly for quick hacks when some flexibility is needed.
+![Database](/db/res/database.png)
 
 In the following example `col` is a value that satisfies [db.Collection][19] (a
 table), `person` is an array of a user-defined struct and `res` is a result of
@@ -52,10 +33,12 @@ type [db.Result][20]:
 ```go
 var people []Person
 
-// Defining a dataset where name = 'Max'
-res = col.Find(db.Cond{"name": "Max"})
+col, err = sess.Collection("people")
+...
 
+res = col.Find(db.Cond{"name": "Max"})
 err = res.All(&people)
+...
 ```
 
 The above example creates a subset from the collection with items that satisfy
@@ -124,86 +107,6 @@ see installation instructions that are specific to each adapter.
 * [PostgreSQL](/db/postgresql)
 * [QL](/db/ql)
 * [SQLite](/db/sqlite/)
-
-## Setting up an example with SQLite
-
-The following part is optional, in this example you'll learn how to use the
-SQLite adapter to open an existent SQLite database.
-
-Open a terminal and check if the `sqlite3` command is installed. If the program
-is missing install it like this:
-
-```go
-# Installing sqlite3 in Debian
-sudo apt-get install sqlite3 -y
-```
-
-Then, run the `sqlite3` command and create a `test.db` database:
-
-```sh
-sqlite3 test.db
-```
-
-The `sqlite3` program will welcome you with a prompt:
-
-```
-sqlite>
-```
-
-From within the `sqlite3` prompt, create a demo table:
-
-```sql
-CREATE TABLE demo (
-  first_name VARCHAR(80),
-  last_name VARCHAR(80),
-  bio TEXT
-);
-```
-
-After creating the table, type `.exit` to end the `sqlite3` session.
-
-```
-sqlite> .exit
-```
-
-### Setting up a database session
-
-Create a `main.go` file and import both the `db` package (`upper.io/db`) and
-the SQLite adapter (`upper.io/db/sqlite`):
-
-```go
-// main.go
-package main
-
-import (
-  "upper.io/db"
-  "upper.io/db/sqlite"
-)
-```
-
-Configure the database credentials using the adapter's own
-[db.ConnectionURL][26] struct. In this case we'll be using the
-`sqlite.ConnectionURL`:
-
-```go
-// main.go
-var settings = sqlite.ConnectionURL{
-  // A SQLite database is a plain file.
-  Database: `/path/to/example.db`,
-}
-```
-
-After configuring the database settings create a `main()` function and use
-`db.Open()` to open the database.
-
-```go
-// Using db.Open() to open the sqlite database
-// specified by the settings variable.
-sess, err = db.Open(sqlite.Adapter, settings)
-```
-
-The `sess` variable is your **database session**, you may now use any
-[db.Database][18] method on this value.
 
 ## Working with collections
 
@@ -1075,38 +978,86 @@ q = b.Update("artist").Set("name = ?", "Artist").Where("id <", 5)
 q = b.DeleteFrom("artist").Where("id > 5")
 ```
 
-## API reference
+## Setting up an example with SQLite
 
-See the full [API reference][6] for `upper.io/db` at [godoc.org][6].
+The following part is optional, in this example you'll learn how to use the
+SQLite adapter to open an existent SQLite database.
 
-## How to contribute
+Open a terminal and check if the `sqlite3` command is installed. If the program
+is missing install it like this:
 
-Thanks for your interest. There are many ways you can help improving this
-project:
+```go
+# Installing sqlite3 in Debian
+sudo apt-get install sqlite3 -y
+```
 
-### Reporting bugs and suggestions
+Then, run the `sqlite3` command and create a `test.db` database:
 
-The [source code page][7] at github includes a nice [issue tracker][8], please
-use this interface to report bugs.
+```sh
+sqlite3 test.db
+```
 
-### Hacking the source
+The `sqlite3` program will welcome you with a prompt:
 
-The [source code page][7] at github includes an [issue tracker][8], see the
-issues or create one, then [create a fork][11], hack on your fork and when
-you're done create a [pull request][12], so that the code contribution can get
-merged into the main package. Note that not all contributions can be merged to
-`upper.io/db`, so please be very explicit on justifying the proposed change and
-on explaining how the package users can get the greater benefit from your hack.
+```
+sqlite>
+```
 
-### Improving the documentation
+From within the `sqlite3` prompt, create a demo table:
 
-There is a special [documentation repository][9] at Github where you may also
-file [issues][10]. If you find any spot were you would like the documentation
-to be more descriptive, please open an issue to let us know; and if you're in
-the possibility of helping us fixing grammar errors, typos, code examples or
-even documentation issues, please [create a fork][11], edit the documentation
-files and then create a [pull request][12], so that the contribution can be
-merged into the main repository.
+```sql
+CREATE TABLE demo (
+  first_name VARCHAR(80),
+  last_name VARCHAR(80),
+  bio TEXT
+);
+```
+
+After creating the table, type `.exit` to end the `sqlite3` session.
+
+```
+sqlite> .exit
+```
+
+### Setting up a database session
+
+Create a `main.go` file and import both the `db` package (`upper.io/db`) and
+the SQLite adapter (`upper.io/db/sqlite`):
+
+```go
+// main.go
+package main
+
+import (
+  "upper.io/db"
+  "upper.io/db/sqlite"
+)
+```
+
+Configure the database credentials using the adapter's own
+[db.ConnectionURL][26] struct. In this case we'll be using the
+`sqlite.ConnectionURL`:
+
+```go
+// main.go
+var settings = sqlite.ConnectionURL{
+  // A SQLite database is a plain file.
+  Database: `/path/to/example.db`,
+}
+```
+
+After configuring the database settings create a `main()` function and use
+`db.Open()` to open the database.
+
+```go
+// Using db.Open() to open the sqlite database
+// specified by the settings variable.
+sess, err = db.Open(sqlite.Adapter, settings)
+```
+
+The `sess` variable is your **database session**, you may now use any
+[db.Database][18] method on this value.
+
 
 ## License
 
