@@ -114,25 +114,32 @@
               <div class="feature">
                 <h2 class="feature__title">Getting started</h2>
                 <p class="feature__description">
-                  <a href="/db/getting-started">Getting started</a>
+                  <a href="/db/getting-started">Let's work</a> with databases
+                  in a less tedious and more productive way.
                 </p>
+                <a href="/db/getting-started">
                 <img class="feature__icon" src="{{ asset "images/figure-01.svg" }}" />
+                </a>
               </div>
               <div class="feature">
                 <h2 class="feature__title">Code examples</h2>
                 <p class="feature__description">
-                  Something amazing.
-                  <a href="/db/examples">Code examples</a>
+                  Learn how to implement common patterns with our <a
+                  href="/db/examples">code examples</a>.
                 </p>
+                <a href="/db/examples">
                 <img class="feature__icon" src="{{ asset "images/figure-02.svg" }}" />
+                </a>
               </div>
               <div class="feature">
                 <h2 class="feature__title">Contribute</h2>
                 <p class="feature__description">
-                  Something amazing.
-                  <a href="/db/contribute">Contribute</a>
+                  Get your hands dirty and <a href="/db/contribute">contribute</a>
+                  with code, examples or documentation.
                 </p>
-                <img class="feature__icon" src="{{ asset "images/figure-03.svg" }}" />
+                <a href="/db/contribute">
+                  <img class="feature__icon" src="{{ asset "images/figure-03.svg" }}" />
+                </a>
               </div>
             </div>
           {{ else }}
