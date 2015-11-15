@@ -13,22 +13,21 @@ import(
 )
 ```
 
-As of today, `upper.io/db` supports the [MySQL][13], [PostgreSQL][14],
-[SQLite][15] and [QL][16] DBMSs and provides partial support for [MongoDB][17].
+`db` supports the [MySQL][13], [PostgreSQL][14], [SQLite][15] and [QL][16]
+databases and provides partial support for [MongoDB][17].
 
 ## Introduction
 
 ### What's the idea behind `upper.io/db`?
 
-`db` centers around the concept of sets. In the SQL world, a single table can
-have many elements (rows) that share the same basic structure, so when we talk
-about sets we refer to specific rows on that table.
+`db` centers around the concept of sets. A collection (or table) represents a
+set that contains data elements (or rows); `db` provides tools to work with
+said elements.
 
 ![Database](/db/res/database.png)
 
-In the following example `col` is a value that satisfies [db.Collection][19] (a
-table), `person` is an array of a user-defined struct and `res` is a result of
-type [db.Result][20]:
+In the following example we fill the `people` slice with all the elements from
+the "people" collection whose "name" field (or column) equals the value "Max".
 
 ```go
 var people []Person
@@ -41,66 +40,113 @@ err = res.All(&people)
 ...
 ```
 
-The above example creates a subset from the collection with items that satisfy
-the condition *name = 'Max'*.
+If we only wanted one result, we could have used `res.One()` instead:
 
-Once you have a collection reference ([db.Collection][19]) you can use the
-`Find()` method on it to delimit the subset of items of the collection to work
-with. If no condition is given, all items of the collection will be selected.
+```go
+var person Person
 
-Conditions are passed to `Find()` as values of type [db.Cond][21],
-[db.And][22], [db.Or][23], [db.Constrainer][24] or [db.Raw][25].
+col, err = sess.Collection("people")
+...
 
-`Find()` returns a [db.Result][20] interface on which you may execute a variety
-of methods, such as `One()`, `All()`, `Count()`, `Remove()`, `Update()` and [so
-on][20].
+res = col.Find(db.Cond{"name": "Max"})
+err = res.All(&person)
+...
+```
+
+In the above example, we used `sess.Collection()` to get a collection reference
+and then we used the `Find()` method on the said reference to filter out the
+results we want; this creates a result set res which we can use to map results
+into an slice (with `All()`) or into a single struct (with `One()`).
+
+The result res points to all the rows from the "people" table that match
+whatever conditions were passed to `db.Collection.Find()`. This result set is
+not only useful for getting and mapping data from permanent storage, but to
+update or delete the whole subset as well.
+
+```go
+res = col.Find(db.Cond{"name": "Jhon"})
+err = res.Update(db.M{"name": "John"})
+...
+```
 
 ![Collections](/db/res/collection.png)
 
-Working with collections feels a lot like NoSQL in the sense that a condition
-must be set in order to choose a subset of items before doing something with
-them.
+A result cannot be used to add an item to the collection, because a result set
+only defines a subset of rows that already exists. If you wanted to add a row
+to the collection you can use the `Append()` method on the collection.
+
+```go
+person = Person{
+  Name:     "Harper",
+  LastName: "Lee",
+}
+nid, err = col.Append(person)
+...
+```
+
+If the table supports automatic indexes, then the `nid` returned by `Append()`
+would be set to the value of the newly added index. The nid is actually an
+`interface{}` type, so you'll probably have to cast it if you want to use it.
+
+```go
+rid, err = col.Append(person)
+...
+id, _ = nid.(int64)
+```
+
+The simple CRUD operations depicted above may come in handy for getting and
+saving data from different databases, but what if you wanted to use advanced
+queries on SQL databases? Then you can use the SQL builder db uses:
+
+```go
+bob = sess.Builder()
+...
+
+q = bob.Select("a.name").From("accounts a").
+  Join("profile p").On("a.profile_id = p.id")
+
+var accounts []Account
+err = q.Iterator().All(&accounts)
+...
+```
+
+Please note that SQL builder is only supported on SQL databases.
+
+If you think the SQL builder methods are not flexible enough you can also use
+raw SQL:
+
+```go
+bob = sess.Builder()
+...
+
+q = bob.Query("SELECT * FROM accounts WHERE id = ?", 5)
+
+var account Account
+err = q.Iterator().One(&account)
+```
+
+As you can see `db` offers you a range of tools that are designed to make
+working with databases less tedious and more productive.
 
 ## Installation
 
-The `upper.io/db` package depends on the [Go compiler and tools][4]. [Version
-1.1+][5] is preferred since the underlying `mgo` driver for the `mongo` adapter
-depends on a method (`reflect.Value.Convert()`) introduced in go1.1.  However,
-using a previous [Go][2] version (down to go1.0.1) could still be possible with
-other adapters.
+The `upper.io/db` package depends on the [Go compiler and tools][4] and it's
+compatible with Go 1.1 and above.
 
-In order to use `go get` to fetch and install [Go][4] packages, you'll also
-need the [git][3] version control system. Please refer to the [git][3] project
-site for specific instructions on how to install it in your operating system.
-
-### Using `go get`
-
-Once you've installed [Go][4], you will be able to download and install the
-`upper.io/db` package using `go get`:
+Use `go get` to download `db`:
 
 ```sh
-go get upper.io/db
+go get -v -u upper.io/db
 ```
-
-**Note:** If the `go get` program fails with something like:
-
-```sh
-package upper.io/db: exec: "git": executable file not found in $PATH
-```
-
-it means that a required program is missing, `git` in this case. To fix this
-error install the missing application and try again.
 
 ## Database adapters
 
-Installing the main package just provides base structures and interfaces but in
-order to actually communicate with a database you'll also need a **database
-adapter**.
+The `db` package provides basic functions and interfaces but in order to
+actually communicate with a database you'll also need a **database adapter**.
 
 ![Adapters](/db/res/adapters.png)
 
-Here's a list of available database adapters. Look into the adapter's link to
-see installation instructions that are specific to each adapter.
+Make sure to tead the instructions from the specific adapter you'd like to use:
 
 * [MySQL](/db/mysql/)
 * [MongoDB](/db/mongo)
@@ -108,444 +154,179 @@ see installation instructions that are specific to each adapter.
 * [QL](/db/ql)
 * [SQLite](/db/sqlite/)
 
-## Working with collections
+## Mapping tables to structs
 
-Collections are sets of items of the same class. SQL tables and NoSQL
-collections are both known as just "collections" within the `upper.io/db`
-context.
-
-### Getting a collection reference
-
-In order to use and query collections you'll need a collection reference, use
-the `db.Database.Collection()` method on the previously defined `sess` variable
-to get one:
+Mapping a table to a struct is easy, you only have to add the db tag next to an
+**exported field** definition and provide options if you need them:
 
 ```go
-// Pass the table/collection name to get a collection
-// reference.
-col, err = sess.Collection("demo")
-```
-
-### Creating items (The C in CRUD)
-
-If you want to insert some data into a collection, you need to define a struct
-that maps properties to collection columns:
-
-```go
-// Use the "db" tag to map column names with Go
-// struct property names.
-type Demo struct {
-  FirstName string `db:"first_name"`
-  LastName  string `db:"last_name"`
-  Bio       string `db:"bio,omitempty"`
+type Person struct {
+  ID       uint64 `db:"id,omitempty"` // use `omitempty` to let auto increment set the value.
+  Name     string `db:"name"`
+  LastName string `db:"last_name"`
 }
 ```
 
-This is how you'd insert a value of type `Demo` into the `col` collection:
+You can mix `db` tags with other tags, such as those used for JSON mapping:
 
 ```go
-item = Demo{
-  "Hayao",
-  "Miyazaki",
-  "Japanese film director.",
+type Person struct {
+  ID        uint64 `db:"id,omitempty" json:"id"`
+  Name      string `db:"name" json:"name"`
+  ...
+  Password  string `db:"password,omitempty" json:"-"`
 }
-
-col.Append(item)
 ```
 
-If you don't want to use structs you can also use maps:
+If you don't provide explicit mappings, `db` will try to use the field name
+(case-sensitive), if you don't want that to happen you can set `-` as the name:
 
 ```go
-// Each key of the following map is a column name.
-item = map[string]interface{}{
-  "first_name": "Hayao",
-  "last_name": "Miyazaki",
-  "bio": "Japanese film director.",
+type Person struct {
+  ...
+  Token    string `db:"-"` // ignore this field completely.
 }
-
-col.Append(item)
 ```
 
-If you have followed the example until here, then you may be able to put
-together a program that may look like this:
+## Setting up a database session
+
+Import the both the `upper.io/db` and the adapter packages into your
+application:
 
 ```go
-// main.go
-
-package main
-
 import (
-  "log"
   "upper.io/db"
-  "upper.io/db/sqlite"
+  "upper.io/db/postgresql" // example adapter package
 )
-
-var settings = sqlite.ConnectionURL{
-  Database: "test.db",
-}
-
-type Demo struct {
-  FirstName string `db:"first_name"`
-  LastName  string `db:"last_name"`
-  Bio       string `db:"bio"`
-}
-
-func main() {
-  var err error
-  var sess db.Database
-  var col db.Collection
-
-  sess, err = db.Open(sqlite.Adapter, settings)
-
-  if err != nil {
-    log.Fatal(err)
-  }
-
-  defer sess.Close()
-
-  col, err = sess.Collection("demo")
-
-  if err != nil {
-    log.Fatal(err)
-  }
-
-  err = col.Append(Demo{
-    FirstName: "Hayao",
-    LastName: "Miyazaki",
-    Bio: "Japanese film director.",
-  })
-
-  if err != nil {
-    log.Fatal(err)
-  }
-}
 ```
 
-compile and run it:
+Make sure to read the adapter page for specific installation instructions.
 
-```sh
-go build main.go
-./main
-```
-
-A new item should've been appended to our "demo" table.
-
-**Note:** `upper.io/db` works fine with maps but using structs is the
-recommended way for mapping table rows or collection elements into Go values,
-as they provide more expressiveness on how columns are actually mapped.
-
-This is the end of the SQLite example but we'll continue exploring the API.
-
-### Defining a struct
-
-You can map database column names to struct properties in a similar way the
-`encoding/json` package does.
-
-In the following example:
+All adapters include a `ConnectionURL` function that you can use to create a
+DSN:
 
 ```go
-type Foo struct {
-  // Will match the column named "id".
-  ID      int64
-  // Will match the column named "title".
-  Title   string
-  // Will be ignored, as it's not an exported property.
-  private bool
+var settings = postgresql.ConnectionURL{
+  User:     "john",
+  Password: "p4ss",
+  Address:  db.Host("localhost"),
+  Database: "myprojectdb",
 }
 ```
 
-The `ID` and `Title` properties begin with an uppercase letter, so they are
-exported properties. Exported properties of a struct are mapped to table
-columns using the property name, the `private` property is unexported and will
-be ignored by `upper.io/db`.
-
-`upper.io/db` assumes that a property will be mapped to one and only one
-column, trying to map multiple properties to the same column is currently not
-supported.
-
-### Custom column names and property options (using the `db` tag).
-
-You can also use a `db` tag in the property definition to bind it to a custom
-column name:
+Create a database session with the `db.Open()` function:
 
 ```go
-type Foo struct {
-  ID      int64
-  // Will be mapped to the "foo_title" column.
-  Title   string `db:"foo_title"`
-  private bool
+sess, err = db.Open(postgresql.Adapter, settings)
+...
+```
+
+The `sess` variable is a database session, you can use any `db.Database`
+methods on it, such as `Collection()`, that will give you a collection
+reference.
+
+```go
+usersCol, err = sess.Collection("users")
+...
+```
+
+Or `C()` that does the same as `Collection()` but panics if the collection does
+not exists:
+
+```go
+res = sess.C("users").Find()
+...
+```
+
+Once you're done with the collection, you can use `Close()` to close it:
+
+```go
+err = sess.Close()
+...
+```
+
+## Basic CRUD usage
+
+We can use the database session `sess` to get a collection referece and insert
+a value into it:
+
+```go
+person := Person{
+  Name:     "Hedy",
+  LastName: "Lamarr",
+}
+
+peopleCol, err = sess.Collection("people")
+...
+
+id, err = peopleCol.Append(person)
+...
+```
+
+If you're absolutely sure the collection exists and you don't fear a panic in
+case it doesn't, you could also use the `C()` method and chain `db.Collection`
+methods to it:
+
+```go
+id, err = sess.C("people").Append(person)
+...
+```
+
+## The Find() method
+
+You can use `Find()` on a collection reference to get a result set from that
+collection.
+
+```go
+res = sess.C("people").Find()
+```
+
+`Find()` accepts conditions that you can describe with the `db.Cond{}` map:
+
+```go
+res = sess.C("people").Find(db.Cond{
+  "id": 25,
+})
+```
+
+### The db.Cond map
+
+`db.Cond{}` is a map with `string` keys and `interface{}` values, the keys
+represent columns and the values represent, well, values. By default
+`db.Cond{}` expresses an equality between columns and values:
+
+```go
+cond = db.Cond{
+  "id": 36, // id equals 36
 }
 ```
 
-Use the `db` to pass additional options for properties. You can specify more
-than one option by separating them using commas:
+But you can also add special operators next to the column:
 
 ```go
-type Foo struct {
-  ID      int64
-  Title   string `db:"column,opt1,opt2,..."`
-  private bool
+cond = db.Cond{
+  "id >": 36, // id greater than 36
 }
 ```
 
-### Skipping empty properties
-
-You can add the `omitempty` option to the `db` tag to make `upper.io/db` ignore
-the field on insert operations when it has the zero value:
+Besides basic operators, you can also use special operators that may only work
+on certain databases, such as `LIKE`:
 
 ```go
-type Foo struct {
-  ID      int64  `db:"id,omitempty"`
-  Title   string `db:"foo_title"`
-  private bool
+cond = db.Cond{
+  "name LIKE": "Pete%", // SQL: name LIKE 'Pete%'
 }
 ```
 
-### Ignoring an exported property
-
-If you need to ignore an exported property regardless of its value you can set
-the property name to "-" using a `db` tag:
+You can define `db.Cond{}` with more than one key-value pair and that means
+than you want both conditions to be met:
 
 ```go
-type Foo struct {
-  ID            int64
-  Title         string
-  private       bool
-  IgnoredProperty  string `db:"-"`
+// name = 'John' AND "last_name" = 'Smi%'
+cond = db.Cond{
+  "name": "John",
+  "last_name LIKE": "Smi%",
 }
-```
-
-You can have as name properties named `"-"` as you need:
-
-```go
-type Foo struct {
-  ID            int64
-  Title         string
-  private       bool
-  IgnoredProperty  string `db:"-"`
-  IgnoredProperty1 string `db:"-"`
-  IgnoredProperty2 string `db:"-"`
-}
-```
-
-### Embedded structs
-
-If youwant to embed one struct into another and you'd like the two of them
-being considered as if they were part of the same struct (at least on
-`upper.io/db` context), you can pass the `inline` option to the property name,
-like this:
-
-```go
-type Foo struct {
-  ID      int64
-  Title   string
-  private bool
-}
-```
-
-```go
-type Bar struct {
-  EmbeddedFoo    Foo     `db:",inline"`
-  ExtraProperty  string  `db:"extra_property"`
-}
-```
-
-Embedding with `inline` also works for anonymous properties:
-
-```go
-type Foo struct {
-  ID      int64
-  Title   string
-  private bool
-}
-```
-
-```go
-type Bar struct {
-  Foo                   `db:",inline"`
-  ExtraProperty  string `db:"extra_property"`
-}
-```
-
-### Optional: The [db.IDSetter][30] interface
-
-The [db.IDSetter][30] interface is defined as follows:
-
-```go
-// IDSetter is the interface implemented by structs that can set
-// their own ID after calling Append().
-type IDSetter interface {
-  SetID(map[string]interface{}) error
-}
-```
-
-`IDSetter` makes it easy to get autoincremented IDs and composite keys
-values to update a struct.
-
-```go
-// Defining a Foo struct.
-type Foo struct {
-  ID uint
-  Bar string
-}
-
-// The values map uses all the columns that compose a primary
-// index as keys mapped to their new values.
-func (f *Foo) SetID(values map[string]interface{}) error {
-  if valueInterface, ok := values["id"]; ok {
-    // A conversion from interface{} is required.
-    f.ID = valueInterface.(int64)
-  }
-  return nil
-}
-
-func Demo() {
-  // ...
-  foo := Foo{
-    Bar: "Hello!",
-  }
-
-  // Note that were passing a pointer of foo.
-  if _, err := col.Append(&foo); err != nil {
-    // Handle error.
-  }
-
-  fmt.Printf("The new ID is: %v\n", foo.ID)
-  // ...
-}
-```
-
-### Optional: Custom ID setters for common key patterns
-
-The [db.IDSetter][30] interface may work great for tables with multiple keys,
-but it feels a bit awkward for tables with a single integer key.
-
-In this case, you could try the [db.Int64IDSetter][31] or
-[db.Uint64IDSetter][32] interfaces:
-
-```go
-type artistWithInt64Key struct {
-  id   int64
-  Name string `db:"name"`
-}
-
-// This SetID() will be called after a successful Append().
-func (artist *artistWithInt64Key) SetID(id int64) error {
-  artist.id = id
-  return nil
-}
-```
-
-This feature is supported on the PostgreSQL, MySQL, SQLite and QL adapters.
-
-### Optional: The [db.Constrainer][24] interface
-
-The [db.Constrainer][24] interface is intended to be used on `db.Find()` calls
-to let the struct that satisfies the interface provide its own conditions.
-
-```go
-// Constrainer is the interface implemented by structs that
-// can delimit themselves.
-type Constrainer interface {
-  Constraint() Cond
-}
-```
-
-This is an usage example:
-
-```go
-// Defining a Foo struct.
-type Foo struct {
-  ID uint
-  Bar string
-}
-
-// Foo will try to constraint itself to all the items that
-// satisfy the id = f.ID condition (probably just one, if
-// "id" is a primary key).
-func (f Foo) Constraint() db.Cond {
-  cond := db.Cond{
-    "id": f.ID,
-  }
-  return cond
-}
-
-func Demo() {
-  // ...
-  var foo Foo
-
-  // This anonymous Foo{} satisfies [db.Constrainer][24].
-  res := col.Find(Foo{ID: 42})
-
-  // One() will use the contraint already set in place
-  // by Find() and Foo{}.
-  if err := res.One(&foo); err != nil {
-    // Handle error.
-  }
-
-  fmt.Printf("The value of foo is: %v\n", foo)
-  // ...
-}
-```
-
-## Working with result sets
-
-You can use the `db.Collection.Find()` to define a result set.
-
-Result sets can be iterated using `db.Collection.Next()`, dumped to a pointer
-with `db.Result.One()` or dumped to a pointer of array of items with
-`db.Result.All()`.
-
-```go
-// SELECT * FROM people WHERE last_name = "Miyazaki"
-res = col.Find(db.Cond{"last_name": "Miyazaki"})
-```
-
-### Retrieving items (The R in CRUD)
-
-Once you have a result set (`res` in this example), you can fetch all results
-into an array by providing a pointer to that array:
-
-```go
-// Define birthday as an array of Birthday{} and fetch
-// the contents of the result set into it using
-// `db.Result.All()`.
-var birthday []Birthday
-
-err = res.All(&birthday)
-```
-
-Filling an array could be expensive if you're working with a large collection,
-in this case looping over one result at a time will perform better. Use
-`db.Result.Next()` to fetch one item at a time:
-
-```go
-var birthday Birthday
-for {
-  // Walking over the result set.
-  err = res.Next(&birthday)
-  if err == nil {
-    // No error happened.
-  } else if err == db.ErrNoMoreRows {
-    // Natural end of the result set.
-    break;
-  } else {
-    // Another kind of error, should be taken care of.
-    return res
-  }
-}
-// Remember to close the result set when using
-// db.Result.Next()
-res.Close()
-```
-
-If you need only one element of the result set, the `db.Result.One()` method
-would be better suited for the task.
-
-```go
-var birthday Birthday
-
-err = res.One(&birthday)
 ```
 
 ### Narrowing result sets
@@ -753,48 +534,7 @@ type birthday struct {
 **Note:** Currently, marshaling and unmarshaling are only available on the
 `postgresql`, `mysql`, `sqlite` and `ql` adapters.
 
-### Closing result sets
-
-Result sets are automatically closed after calls to `db.Result.All()` and
-`db.Result.One()`, if you're using `db.Result.Next()` you must close your
-result after you finished using it:
-
-```go
-res.Close()
-```
-
-If you're not properly closing result sets, you could run into nasty problems
-with zombie database connections or too many open file descriptors.
-
-## More operations with result sets
-
-Result sets are not only capable of returning items, they can also be used to
-update or delete all the items that match the given conditions.
-
-### Updating items (The U in CRUD)
-
-If you want to update the whole set of items in the result set you can use the
-`db.Result.Update()` method.
-
-```go
-res = col.Find(db.Cond{"name": "Old name"})
-err = res.Update(map[string]interface{}{
-  "name": "New name",
-})
-```
-
-### Deleting items (The D in CRUD)
-
-If you want to delete a set of items, use the `db.Result.Remove()` method on a
-result set.
-
-```go
-res = col.Find(db.Cond{"active": false})
-
-res.Remove()
-```
-
-## Working with databases
+## Operations on databases
 
 There are many more things you can do with a [db.Database][18] struct besides
 getting a collection.
@@ -812,6 +552,34 @@ If you need to switch databases, you can use the `db.Database.Use()` method
 
 ```go
 err = sess.Use("another_database")
+```
+
+## Transactions
+
+You can use the `db.Database.Transaction()` function to start a transaction (if
+the database adapter supports such feature). `db.Database.Transaction()`
+returns a clone of the session (type [db.Tx][29]) with two added functions:
+`db.Tx.Commit()` and `db.Tx.Rollback()` that you can use to save the
+transaction or to abort it.
+
+```go
+var tx db.Tx
+if tx, err = sess.Transaction(); err != nil {
+  log.Fatal(err)
+}
+
+var artist db.Collection
+if artist, err = tx.Collection("artist"); err != nil {
+  log.Fatal(err)
+}
+
+if _, err = artist.Append(item); err != nil {
+  log.Fatal(err)
+}
+
+if err = tx.Commit(); err != nil {
+  log.Fatal(err)
+}
 ```
 
 ## Tips and tricks
@@ -840,34 +608,6 @@ UPPERIO_DB_DEBUG=1 go test
 ...
 ```
 
-### Transactions
-
-You can use the `db.Database.Transaction()` function to start a transaction (if
-the database adapter supports such feature). `db.Database.Transaction()`
-returns a clone of the session (type [db.Tx][29]) with two added functions:
-`db.Tx.Commit()` and `db.Tx.Rollback()` that you can use to save the
-transaction or to abort it.
-
-```go
-var tx db.Tx
-if tx, err = sess.Transaction(); err != nil {
-  log.Fatal(err)
-}
-
-var artist db.Collection
-if artist, err = tx.Collection("artist"); err != nil {
-  log.Fatal(err)
-}
-
-if _, err = artist.Append(item); err != nil {
-  log.Fatal(err)
-}
-
-if err = tx.Commit(); err != nil {
-  log.Fatal(err)
-}
-```
-
 ### Working with the underlying driver
 
 Many situations will require you to use methods that are specific to the
@@ -887,176 +627,6 @@ This is another example using `db.Database.Driver()` with a SQL adapter:
 drv = sess.Driver().(*sql.DB)
 rows, err = drv.Query("SELECT name FROM users WHERE age=?", age)
 ```
-
-### The SQL Builder.
-
-Sometimes you'll need to execute complex SQL queries with joins and database
-specific magic, in such cases you can access the [query builder][33] directly
-by using the `Builder()` method on `sess`.
-
-```go
-  var sess db.Database
-  var err error
-
-  type Publication struct {
-    ID       int64  `db:"id,omitempty"`
-    Title    string `db:"title"`
-    AuthorID int64  `db:"author_id"`
-  }
-
-  if sess, err = db.Open(Adapter, settings); err != nil {
-    t.Fatal(err)
-  }
-
-  defer sess.Close()
-
-  b := sess.Builder()
-
-  // Using query builder.
-  q := b.Select(
-      "p.id",
-      "p.title AD publication_title",
-      "a.name AS artist_name",
-    ).From("artists AS a", "publication AS p").
-    Where("a.id = p.author_id")
-
-  iter := q.Iterator()
-
-  var publications []Publication
-
-  // Dumping results to an array.
-  if err = iter.All(&publications); err != nil {
-    t.Fatal(err)
-  }
-
-  if len(all) != 9 {
-    t.Fatalf("Expecting some rows.")
-  }
-```
-
-Some SQL builder examples:
-
-```go
-b := sess.Builder()
-
-// SELECT * FROM "artist" ORDER BY "name" DESC
-q = b.Select().From("artist").OrderBy("name DESC")
-
-// SELECT "id" FROM "artist"
-q = b.Select("id").From("artist")
-
-// SELECT * FROM "artist" WHERE ("id" > 2)
-q = b.SelectAllFrom("artist").Where("id >", 2)
-
-// SELECT * FROM "artist" AS "a", "publication" AS "p"
-//  WHERE (p.author_id = a.id) LIMIT 1
-q = b.Select().From("artist a", "publication as p").
-  Where("p.author_id = a.id").Limit(1)
-
-// SELECT * FROM "artist" AS "a" JOIN "publication" AS "p"
-//  ON (p.author_id = a.id) LIMIT 1
-q = b.SelectAllFrom("artist a").Join("publication p").
-  On("p.author_id = a.id").Limit(1)
-
-// SELECT * FROM "artist" AS "a"
-//  LEFT JOIN "publication" AS "p1" ON (p1.id = a.id)
-//  RIGHT JOIN "publication" AS "p2" ON (p2.id = a.id)
-q = b.SelectAllFrom("artist a").
-  LeftJoin("publication p1").On("p1.id = a.id").
-  RightJoin("publication p2").On("p2.id = a.id")
-
-// INSERT INTO "artist" ("id", "name")
-//  VALUES (12, 'Chavela Vargas') RETURNING "id"
-q = b.InsertInto("artist").
-  Values(map[string]string{"id": "12", "name": "Chavela Vargas"}).
-  Returning("id")
-
-// UPDATE "artist" SET "name" = 'Artist' WHERE ("id" < 5)
-q = b.Update("artist").Set("name = ?", "Artist").Where("id <", 5)
-
-// DELETE FROM "artist" WHERE (id > 5)
-q = b.DeleteFrom("artist").Where("id > 5")
-```
-
-## Setting up an example with SQLite
-
-The following part is optional, in this example you'll learn how to use the
-SQLite adapter to open an existent SQLite database.
-
-Open a terminal and check if the `sqlite3` command is installed. If the program
-is missing install it like this:
-
-```go
-# Installing sqlite3 in Debian
-sudo apt-get install sqlite3 -y
-```
-
-Then, run the `sqlite3` command and create a `test.db` database:
-
-```sh
-sqlite3 test.db
-```
-
-The `sqlite3` program will welcome you with a prompt:
-
-```
-sqlite>
-```
-
-From within the `sqlite3` prompt, create a demo table:
-
-```sql
-CREATE TABLE demo (
-  first_name VARCHAR(80),
-  last_name VARCHAR(80),
-  bio TEXT
-);
-```
-
-After creating the table, type `.exit` to end the `sqlite3` session.
-
-```
-sqlite> .exit
-```
-
-### Setting up a database session
-
-Create a `main.go` file and import both the `db` package (`upper.io/db`) and
-the SQLite adapter (`upper.io/db/sqlite`):
-
-```go
-// main.go
-package main
-
-import (
-  "upper.io/db"
-  "upper.io/db/sqlite"
-)
-```
-
-Configure the database credentials using the adapter's own
-[db.ConnectionURL][26] struct. In this case we'll be using the
-`sqlite.ConnectionURL`:
-
-```go
-// main.go
-var settings = sqlite.ConnectionURL{
-  // A SQLite database is a plain file.
-  Database: `/path/to/example.db`,
-}
-```
-
-After configuring the database settings create a `main()` function and use
-`db.Open()` to open the database.
-
-```go
-// Using db.Open() to open the sqlite database
-// specified by the settings variable.
-sess, err = db.Open(sqlite.Adapter, settings)
-```
-
-The `sess` variable is your **database session**, you may now use any
-[db.Database][18] method on this value.
 
 
 ## License
