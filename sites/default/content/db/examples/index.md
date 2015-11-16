@@ -1,7 +1,5 @@
 # Examples and Patterns
 
-Did you check out our [getting started][1] page?
-
 ## Mapping structs to tables
 
 ### Typical mapping
