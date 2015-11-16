@@ -2,7 +2,7 @@
 
 Did you check out our [getting started][1] page?
 
-## Mapping a struct to a table
+## Mapping structs to tables
 
 ### Typical mapping
 
@@ -394,6 +394,49 @@ q := b.SelectAllFrom("accounts")
 
 var accounts []Account
 err = q.All(&accounts)
+...
+```
+
+Using the query builder you can express complex queries for SQL databases:
+
+```go
+q = b.Select("id", "name").From("accounts").
+  Where("last_name = ?", "Smith").
+  OrderBy("name").Limit(10)
+```
+
+Even joins are supported:
+
+```go
+q = b.Select("a.name").From("accounts AS a").
+  Join("profiles AS p").
+  On("p.account_id = a.id")
+
+q = b.Select("name").From("accounts").
+  Join("owners").
+  Using("employee_id")
+```
+
+Sometimes the builder won't be able to represent complex queries, if this
+happens it may be more effective to use plain SQL:
+
+```go
+rows, err = b.Query(`SELECT * FROM accounts WHERE id = ?`, 5)
+...
+row, err = b.QueryRow(`SELECT * FROM accounts WHERE id = ? LIMIT ?`, 5, 1)
+...
+res, err = b.Exec(`DELETE FROM accounts WHERE id = ?`, 5)
+...
+```
+
+Mapping results from raw queries is also really easy:
+
+```go
+rows, err = b.Query(`SELECT * FROM accounts WHERE last_name = ?`, "Smith")
+...
+var accounts []Account
+iter := sqlbuilder.NewIterator(rows)
+iter.All(&accounts)
 ...
 ```
 
