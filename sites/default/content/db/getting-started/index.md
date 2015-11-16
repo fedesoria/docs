@@ -484,6 +484,10 @@ transaction or to discard it completely.
 Once the transaction is commited or rolled back, the transaction will no longer
 accept more commands.
 
+## Examples
+
+See code examples and patterns at our [examples](/db/examples) page.
+
 ## Tips and tricks
 
 ### Logging

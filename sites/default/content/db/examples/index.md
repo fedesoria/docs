@@ -1,5 +1,8 @@
 # Examples and Patterns
 
+This is the perfect page to read after checking out the [getting started][1]
+page.
+
 ## Mapping structs to tables
 
 ### Typical mapping
