@@ -44,6 +44,8 @@ a {
     text-decoration: underline; }
   p a {
     color: #1f8ace; }
+	div.container ul a {
+    color: #1f8ace; }
 
 code {
   font-size: 0.9em;

@@ -52,6 +52,15 @@
             </ul>
           {{ end }}
         </div>
+      {{ if .URLMatch "^/builder" }}
+        <div class="nav--adapters">
+          <span class="nav__trigger--adapters" id="adapters-menu-trigger">Packages</span>
+          <ul id="adapters-menu">
+            <li><a href="/db">db</a></li>
+          </ul>
+        </div>
+      {{end}}
+      {{ if .URLMatch "^/db" }}
         <div class="nav--adapters">
           <span class="nav__trigger--adapters" id="adapters-menu-trigger">adapters</span>
           <ul id="adapters-menu">
@@ -62,8 +71,9 @@
             <li><a href="/db/mongo">MongoDB</a></li>
           </ul>
         </div>
+      {{end}}
       </nav>
-      {{ if eq .CurrentPage.URL "/db" }}
+      {{ if not (.URLMatch "^/.+/.+") }}
         <div class="hero">
           <div class="container">
             <img class="hero__background" src="{{ asset "/images/city.svg" }}" />
@@ -86,23 +96,25 @@
     </header>
     <main>
 
-        {{ if .Content }}
-          <nav class="sections__nav">
-            <div class="nav__trigger--sections__nav" id="sections-menu-trigger">Index</div>
-            <div class="sections__nav__block" id="sections-menu">
-              <h2 class="sections__nav__title">
-                {{ range .GetTitlesFromLevel 0 }}
-                  <a href="{{ .url }}">{{ .text }}</a>
+        {{ if (.URLMatch "^/.+/.+") }}
+          {{ if .Content }}
+            <nav class="sections__nav">
+              <div class="nav__trigger--sections__nav" id="sections-menu-trigger">Index</div>
+              <div class="sections__nav__block" id="sections-menu">
+                <h2 class="sections__nav__title">
+                  {{ range .GetTitlesFromLevel 0 }}
+                    <a href="{{ .url }}">{{ .text }}</a>
+                  {{ end }}
+                </h2>
+                <ul>
+                {{ range .GetTitlesFromLevel 1 }}
+                  <li><a href="{{ .url }}">{{ .text }}</a></li>
                 {{ end }}
-              </h2>
-              <ul>
-              {{ range .GetTitlesFromLevel 1 }}
-                <li><a href="{{ .url }}">{{ .text }}</a></li>
-              {{ end }}
-              </ul>
-            </div>
-          </nav>
-          <article>
+                </ul>
+              </div>
+            </nav>
+            <article>
+          {{ end }}
         {{ end }}
 
         <div class="container">
@@ -157,7 +169,7 @@
           {{ end }}
         </div>
     </main>
-    <script src="js/app.js"></script>
+    <script src="{{ asset "/js/app.js" }}"></script>
     {{ if setting "page/body/scripts/footer" }}
       <script type="text/javascript">
         {{ setting "page/body/scripts/footer" | jstext }}
