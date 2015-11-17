@@ -284,7 +284,7 @@ result at a time:
 
 ```go
 var account Account
-for err := res.Next(&account) {
+for err := res.Next(&account); err != nil {
   ...
 }
 res.Close()
