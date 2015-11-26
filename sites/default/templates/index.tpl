@@ -26,18 +26,6 @@
     <script>hljs.initHighlightingOnLoad();</script>
 
     <script src="{{asset "js/main.js"}}"></script>
-
-    <meta name="go-import" content="upper.io/db git https://github.com/upper/db">
-    <meta name="go-import" content="upper.io/builder git https://github.com/upper/builder">
-
-    <meta name="go-import" content="upper.io/queue git https://github.com/upper/queue">
-    <meta name="go-import" content="upper.io/ground git https://github.com/upper/ground">
-    <meta name="go-import" content="upper.io/bridge git https://github.com/upper/bridge">
-    <meta name="go-import" content="upper.io/db-misc git https://github.com/upper/db-misc">
-    <meta name="go-import" content="upper.io/cache git https://github.com/upper/cache">
-    <meta name="go-import" content="upper.io/patterns git https://github.com/upper/patterns">
-    <meta name="go-import" content="upper.io/i git https://github.com/upper/i">
-    <meta name="go-import" content="upper.io/bond git https://github.com/upper/bond">
   </head>
 
   <body>

@@ -2,7 +2,7 @@
 
 ![upper.io/db package](/db/res/general.png)
 
-The `upper.io/db` package for [Go][2] provides a *common interface* to work
+The `upper.io/db` package for [Go][1] provides a *common interface* to work
 with different data sources using *adapters* that wrap mature database drivers.
 
 ```go
@@ -12,9 +12,9 @@ import(
 )
 ```
 
-`db` supports the [MySQL][13], [PostgreSQL][14], [SQLite][15] and [QL][16]
+`db` supports the [MySQL][3], [PostgreSQL][4], [SQLite][5] and [QL][6]
 databases and provides partial support (CRUD, no transactions) for
-[MongoDB][17].
+[MongoDB][7].
 
 ## Introduction
 
@@ -27,6 +27,33 @@ set that contains data items (or rows).
 
 In the following example we load the `people` slice with all the elements from
 the "people" collection whose "name" field (or column) equals the value "Max".
+
+### Differences from v1
+
+1. v2 has a query builder.
+1. `db.And()`, `db.Or()`, `db.Func()` and `db.Raw()` are now functions.
+1. `db.Session.Collection()` only accepts one table.
+1. JOIN capabilities where removed from `Find()` (in favour of `Builder()`).
+
+### How to install v2?
+
+Use `go get` to pull the package:
+
+```go
+go get -v upper.io/db.v2
+```
+
+If the above command does not work for some reason, you can also pull the
+source directly from GitHub:
+
+```sh
+export UPPERIO_V2=$GOPATH/src/upper.io/db.v2
+rm -rf $UPPERIO_V2
+mkdir -p $UPPERIO_V2
+git clone https://github.com/upper/db.git $UPPERIO_V2
+cd $UPPERIO_V2 && git checkout v2
+go build && go install
+```
 
 ### Code example
 
@@ -134,7 +161,7 @@ working with databases less tedious and more productive.
 
 ## Installation
 
-The `upper.io/db` package depends on the [Go compiler and tools][4] and it's
+The `upper.io/db` package depends on the [Go compiler and tools][2] and it's
 compatible with Go 1.1 and above.
 
 Use `go get` to download `db`:
@@ -562,36 +589,10 @@ The MIT license:
 > OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 > WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-[1]: https://upper.io
-[2]: http://golang.org
-[3]: http://git-scm.com/
-[4]: http://golang.org/doc/install
-[5]: http://golang.org/doc/go1.1
-[6]: http://godoc.org/upper.io/db
-[7]: https://github.com/upper/db
-[8]: https://github.com/upper/db/issues
-[9]: https://github.com/upper/site
-[10]: https://github.com/upper/db-docs/issues
-[11]: https://help.github.com/articles/fork-a-repo
-[12]: https://help.github.com/articles/fork-a-repo#pull-requests
-[13]: http://www.mysql.com/
-[14]: http://www.postgresql.org/
-[15]: http://www.sqlite.org/
-[16]: https://github.com/cznic/ql
-[17]: http://www.mongodb.org/
-[18]: http://godoc.org/upper.io/db#Database
-[19]: http://godoc.org/upper.io/db#Collection
-[20]: http://godoc.org/upper.io/db#Result
-[21]: http://godoc.org/upper.io/db#Cond
-[22]: http://godoc.org/upper.io/db#And
-[23]: http://godoc.org/upper.io/db#Or
-[24]: http://godoc.org/upper.io/db#Constrainer
-[25]: http://godoc.org/upper.io/db#Raw
-[26]: http://godoc.org/upper.io/db#ConnectionURL
-[27]: http://godoc.org/upper.io/db#Marshaler
-[28]: http://godoc.org/upper.io/db#Unmarshaler
-[29]: http://godoc.org/upper.io/db#Tx
-[30]: http://godoc.org/upper.io/db#IDSetter
-[31]: http://godoc.org/upper.io/db#Int64IDSetter
-[32]: http://godoc.org/upper.io/db#Uint64IDSetter
-[33]: https://godoc.org/upper.io/builder/meta
+[1]: https://golang.org
+[2]: https://golang.org/doc/install
+[3]: http://www.mysql.com/
+[4]: http://www.postgresql.org/
+[5]: http://www.sqlite.org/
+[6]: https://github.com/cznic/ql
+[7]: http://www.mongodb.org/
