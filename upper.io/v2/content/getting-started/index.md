@@ -1,14 +1,14 @@
-# upper.io/db
+# upper.io/db.v2
 
-![upper.io/db package](/db/res/general.png)
+![upper.io/db.v2 package](/db/res/general.png)
 
-The `upper.io/db` package for [Go][1] provides a *common interface* to work
+The `upper.io/db.v2` package for [Go][1] provides a *common interface* to work
 with different data sources using *adapters* that wrap mature database drivers.
 
 ```go
 import(
-  "upper.io/db"             // main package
-  "upper.io/db/postgresql"  // adapter for PostgreSQL
+  "upper.io/db.v2"             // main package
+  "upper.io/db.v2/postgresql"  // adapter for PostgreSQL
 )
 ```
 
@@ -18,7 +18,7 @@ databases and provides partial support (CRUD, no transactions) for
 
 ## Introduction
 
-### What's the idea behind `upper.io/db`?
+### What's the idea behind `upper.io/db.v2`?
 
 `db` centers around the concept of sets. A collection (or table) represents a
 set that contains data items (or rows).
@@ -161,13 +161,13 @@ working with databases less tedious and more productive.
 
 ## Installation
 
-The `upper.io/db` package depends on the [Go compiler and tools][2] and it's
+The `upper.io/db.v2` package depends on the [Go compiler and tools][2] and it's
 compatible with Go 1.1 and above.
 
 Use `go get` to download `db`:
 
 ```sh
-go get -v -u upper.io/db
+go get -v -u upper.io/db.v2
 ```
 
 ## Database adapters
@@ -224,12 +224,12 @@ type Person struct {
 
 ### Setting up a database session
 
-Import both the `upper.io/db` and the adapter packages into your application:
+Import both the `upper.io/db.v2` and the adapter packages into your application:
 
 ```go
 import (
-  "upper.io/db"
-  "upper.io/db/postgresql" // example adapter package
+  "upper.io/db.v2"
+  "upper.io/db.v2/postgresql" // example adapter package
 )
 ```
 
@@ -519,7 +519,7 @@ See code examples and patterns at our [examples](/db/examples) page.
 
 ### Logging
 
-You can force `upper.io/db` to print SQL statements and errors to standard
+You can force `upper.io/db.v2` to print SQL statements and errors to standard
 output by using the `UPPERIO_DB_DEBUG` environment variable:
 
 ```console
@@ -529,7 +529,7 @@ UPPERIO_DB_DEBUG=1 ./go-program
 You can also use this environment variable when running tests.
 
 ```console
-cd $GOPATH/src/upper.io/db/sqlite
+cd $GOPATH/src/upper.io/db.v2/sqlite
 UPPERIO_DB_DEBUG=1 go test
 ...
 2014/06/22 05:15:20

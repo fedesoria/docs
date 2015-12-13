@@ -1,6 +1,6 @@
 # SQLite
 
-The `upper.io/db/sqlite` adapter for the [SQLite3][3] wraps the
+The `upper.io/db.v2/sqlite` adapter for the [SQLite3][3] wraps the
 `github.com/mattn/go-sqlite3` driver written by [Yasuhiro Matsumoto][1].
 
 ## Installation
@@ -31,7 +31,7 @@ Once `gcc` is installed, use `go get` to download, compile and install the
 sqlite adapter.
 
 ```
-go get upper.io/db/sqlite
+go get upper.io/db.v2/sqlite
 ```
 
 ## Setting up database access
@@ -58,15 +58,15 @@ You may use `sqlite.ConnectionURL` as argument for `db.Open()`.
 
 ## Usage
 
-To use this adapter, import `upper.io/db` and the `upper.io/db/sqlite` packages.
+To use this adapter, import `upper.io/db.v2` and the `upper.io/db.v2/sqlite` packages.
 
 ```go
 // main.go
 package main
 
 import (
-  "upper.io/db"
-  "upper.io/db/sqlite"
+  "upper.io/db.v2"
+  "upper.io/db.v2/sqlite"
 )
 ```
 
@@ -116,8 +116,8 @@ import (
   "fmt"
   "log"
   "time"
-  "upper.io/db"          // Imports the main db package.
-  "upper.io/db/sqlite"   // Imports the sqlite adapter.
+  "upper.io/db.v2"          // Imports the main db package.
+  "upper.io/db.v2/sqlite"   // Imports the sqlite adapter.
 )
 
 var settings = sqlite.ConnectionURL{

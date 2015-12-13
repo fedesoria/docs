@@ -8,7 +8,7 @@ driver written by [Julien Schmidt][1].
 Use `go get` to download and install the adapter:
 
 ```
-go get upper.io/db/mysql
+go get upper.io/db.v2/mysql
 ```
 
 ## Setting up database access
@@ -39,15 +39,15 @@ mysql.ParseURL(s string) (ConnectionURL, error)
 
 ## Usage
 
-To use this adapter, import `upper.io/db` and the `upper.io/db/mysql` packages.
+To use this adapter, import `upper.io/db.v2` and the `upper.io/db.v2/mysql` packages.
 
 ```go
 // main.go
 package main
 
 import (
-  "upper.io/db"
-  "upper.io/db/mysql"
+  "upper.io/db.v2"
+  "upper.io/db.v2/mysql"
 )
 ```
 
@@ -97,8 +97,8 @@ package main
 import (
   "fmt"
   "time"
-  "upper.io/db"         // Imports the main db package.
-  "upper.io/db/mysql"   // Imports the mysql adapter.
+  "upper.io/db.v2"         // Imports the main db package.
+  "upper.io/db.v2/mysql"   // Imports the mysql adapter.
 )
 
 var settings = mysql.ConnectionURL{

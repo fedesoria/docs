@@ -43,8 +43,8 @@ for column matches.
 
 ```go
 import (
-  "upper.io/db"
-  "upper.io/db/postgresql"
+  "upper.io/db.v2"
+  "upper.io/db.v2/postgresql"
 )
 
 
@@ -65,8 +65,8 @@ sess.Close()
 
 ```go
 import (
-  "upper.io/db"
-  "upper.io/db/postgresql"
+  "upper.io/db.v2"
+  "upper.io/db.v2/postgresql"
 )
 
 var dsn string = "postgres://c.brown:sn00py@localhost/peanuts"

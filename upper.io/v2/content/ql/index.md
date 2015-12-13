@@ -1,6 +1,6 @@
 # QL
 
-The `upper.io/db/ql` adapter for the [QL][1] wraps the `github.com/cznic/ql/ql`
+The `upper.io/db.v2/ql` adapter for the [QL][1] wraps the `github.com/cznic/ql/ql`
 driver written by [Jan Mercl][1].
 
 ## Installation
@@ -8,7 +8,7 @@ driver written by [Jan Mercl][1].
 Use `go get` to download and install the adapter:
 
 ```go
-go get upper.io/db/ql
+go get upper.io/db.v2/ql
 ```
 
 ## Setting up database access
@@ -35,15 +35,15 @@ You may use `ql.ConnectionURL` as argument for `db.Open()`.
 
 ## Usage
 
-To use this adapter, import `upper.io/db` and the `upper.io/db/ql` packages.
+To use this adapter, import `upper.io/db.v2` and the `upper.io/db.v2/ql` packages.
 
 ```go
 # main.go
 package main
 
 import (
-  "upper.io/db"
-  "upper.io/db/ql"
+  "upper.io/db.v2"
+  "upper.io/db.v2/ql"
 )
 ```
 
@@ -93,8 +93,8 @@ import (
   "fmt"
   "log"
   "time"
-  "upper.io/db"      // Imports the main db package.
-  "upper.io/db/ql"   // Imports the ql adapter.
+  "upper.io/db.v2"      // Imports the main db package.
+  "upper.io/db.v2/ql"   // Imports the ql adapter.
 )
 
 var settings = ql.ConnectionURL{

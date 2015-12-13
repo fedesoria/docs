@@ -1,6 +1,6 @@
 # PostgreSQL
 
-The `upper.io/db/postgresql` adapter for [PostgreSQL][2] wraps the
+The `upper.io/db.v2/postgresql` adapter for [PostgreSQL][2] wraps the
 `github.com/lib/pq` driver written by [Blake Mizerany][1].
 
 ## Installation
@@ -8,7 +8,7 @@ The `upper.io/db/postgresql` adapter for [PostgreSQL][2] wraps the
 Use `go get` to download and install the adapter:
 
 ```
-go get upper.io/db/postgresql
+go get upper.io/db.v2/postgresql
 ```
 
 ## Setting up database access
@@ -41,7 +41,7 @@ You may use a `postgresql.ConnectionURL` value as argument for `db.Open()`.
 
 ## Usage
 
-To use this adapter, import `upper.io/db` and the `upper.io/db/postgresql`
+To use this adapter, import `upper.io/db.v2` and the `upper.io/db.v2/postgresql`
 packages.
 
 ```go
@@ -49,8 +49,8 @@ packages.
 package main
 
 import (
-  "upper.io/db"
-  "upper.io/db/postgresql"
+  "upper.io/db.v2"
+  "upper.io/db.v2/postgresql"
 )
 ```
 
@@ -101,8 +101,8 @@ import (
   "fmt"
   "log"
   "time"
-  "upper.io/db"              // Imports the main db package.
-  _ "upper.io/db/postgresql" // Imports the postgresql adapter.
+  "upper.io/db.v2"              // Imports the main db package.
+  _ "upper.io/db.v2/postgresql" // Imports the postgresql adapter.
 )
 
 var settings = postgresql.ConnectionURL{

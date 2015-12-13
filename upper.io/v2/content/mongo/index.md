@@ -23,7 +23,7 @@ sudo apt-get install bzr -y
 After bazaar is installed, use `go get` to download and install the adapter.
 
 ```
-go get upper.io/db/mongo
+go get upper.io/db.v2/mongo
 ```
 
 ## Setting up database access
@@ -55,15 +55,15 @@ You may use `mongo.ConnectionURL` as argument for `db.Open()`.
 
 ## Usage
 
-To use this adapter, import `upper.io/db` and the `upper.io/db/mongo` packages.
+To use this adapter, import `upper.io/db.v2` and the `upper.io/db.v2/mongo` packages.
 
 ```go
 // main.go
 package main
 
 import (
-  "upper.io/db"
-  "upper.io/db/mongo"
+  "upper.io/db.v2"
+  "upper.io/db.v2/mongo"
 )
 ```
 
@@ -95,8 +95,8 @@ import (
   "log"
   "time"
 
-  "upper.io/db"         // Imports the main db package.
-  "upper.io/db/mongo"   // Imports the mongo adapter.
+  "upper.io/db.v2"         // Imports the main db package.
+  "upper.io/db.v2/mongo"   // Imports the mongo adapter.
 )
 
 var settings = mongo.ConnectionURL{
@@ -219,5 +219,5 @@ func (artist *artistWithObjectIdKey) SetID(id bson.ObjectId) error {
 [2]: http://bazaar.canonical.com/en/
 [3]: http://www.mongodb.org/
 [4]: http://labix.org/gobson
-[5]: http://godoc.org/upper.io/db#IDSetter
-[6]: http://godoc.org/upper.io/db/mongo#ObjectIdIDSetter
+[5]: http://godoc.org/upper.io/db.v2#IDSetter
+[6]: http://godoc.org/upper.io/db.v2/mongo#ObjectIdIDSetter
