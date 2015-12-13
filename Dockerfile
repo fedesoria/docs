@@ -14,6 +14,8 @@ RUN chmod +x /bin/luminos
 
 RUN mkdir -p ${DOC_ROOT}
 
+COPY settings.yaml /etc/settings.yaml
+
 EXPOSE 9000
 
 ENTRYPOINT ["/bin/luminos"]

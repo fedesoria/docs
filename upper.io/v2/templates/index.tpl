@@ -25,7 +25,7 @@
     <script src="//menteslibres.net/static/highlightjs/highlight.pack.js?v0000"></script>
     <script>hljs.initHighlightingOnLoad();</script>
 
-    <script src="{{asset "js/main.js"}}"></script>
+    <script src="{{asset "/js/main.js"}}"></script>
   </head>
 
   <body>
@@ -40,35 +40,25 @@
             </ul>
           {{ end }}
         </div>
-      {{ if .URLMatch "^/builder" }}
-        <div class="nav--adapters">
-          <span class="nav__trigger--adapters" id="adapters-menu-trigger">Packages</span>
-          <ul id="adapters-menu">
-            <li><a href="/db">db</a></li>
-          </ul>
-        </div>
-      {{end}}
-      {{ if .URLMatch "^/db" }}
         <div class="nav--adapters">
           <span class="nav__trigger--adapters" id="adapters-menu-trigger">adapters</span>
           <ul id="adapters-menu">
-            <li><a href="/db/postgresql">PostgreSQL</a></li>
-            <li><a href="/db/mysql">MySQL</a></li>
-            <li><a href="/db/sqlite">SQLite</a></li>
-            <li><a href="/db/ql">QL</a></li>
-            <li><a href="/db/mongo">MongoDB</a></li>
+            <li>{{ anchor "/postgresql" "PostgreSQL" }}</li>
+            <li>{{ anchor "/mysql" "MySQL" }}</li>
+            <li>{{ anchor "/sqlite" "SQLite" }}</li>
+            <li>{{ anchor "/ql" "QL" }}</li>
+            <li>{{ anchor "/mongo" "MongoDB" }}</li>
           </ul>
         </div>
-      {{end}}
       </nav>
-      {{ if not (.URLMatch "^/.+/.+") }}
+      {{ if not (.URLMatch "^/.+") }}
         <div class="hero">
           <div class="container">
             <img class="hero__background" src="{{ asset "/images/city.svg" }}" />
             <div class="hero__info">
               <img class="hero__gopher" src="{{ asset "/images/gopher.svg" }}" />
               <h1 class="hero__title">
-                <a href="/db">
+                <a href="{{ asset "/" }}">
                   <img src="{{ asset "/images/logo.svg" }}" />
                   <span>upper.io/db</span>
                 </a>
@@ -84,7 +74,7 @@
     </header>
     <main>
 
-        {{ if (.URLMatch "^/.+/.+") }}
+        {{ if (.URLMatch "^/.+") }}
           {{ if .Content }}
             <nav class="sections__nav">
               <div class="nav__trigger--sections__nav" id="sections-menu-trigger">Index</div>
@@ -106,7 +96,7 @@
         {{ end }}
 
         <div class="container">
-          {{ if eq .CurrentPage.URL "/db" }}
+          {{ if eq .CurrentPage.URL "/" }}
             <p class="pressly text-center hidden-extra-small">Proudly sponsored by
               <a href="https://www.pressly.com" target="_blank"><img class="vertical-middle logo-pressly" src="{{ asset "images/pressly.png" }}" /></a>
             </p>
@@ -114,30 +104,30 @@
               <div class="feature">
                 <h2 class="feature__title">Getting started</h2>
                 <p class="feature__description">
-                  <a href="/db/getting-started">Let's work</a> with databases
+                  {{ anchor "/getting-started" "Let's work"}} with databases
                   in a less tedious and more productive way.
                 </p>
-                <a href="/db/getting-started">
+                <a href="{{ asset "/getting-started" }}">
                 <img class="feature__icon" src="{{ asset "images/figure-01.svg" }}" />
                 </a>
               </div>
               <div class="feature">
                 <h2 class="feature__title">Code examples</h2>
                 <p class="feature__description">
-                  Learn how to implement common patterns with our <a
-                  href="/db/examples">code examples</a>.
+                  Learn how to implement common patterns with our
+                  {{ anchor "/examples" "code examples" }}
                 </p>
-                <a href="/db/examples">
+                <a href="{{ asset "/examples" }}">
                 <img class="feature__icon" src="{{ asset "images/figure-02.svg" }}" />
                 </a>
               </div>
               <div class="feature">
                 <h2 class="feature__title">Contribute</h2>
                 <p class="feature__description">
-                  Get your hands dirty and <a href="/db/contribute">contribute</a>
+                  Get your hands dirty and {{ anchor "/contribute" "contribute" }}
                   with code, examples or documentation.
                 </p>
-                <a href="/db/contribute">
+                <a href="{{ asset "/contribute" }}">
                   <img class="feature__icon" src="{{ asset "images/figure-03.svg" }}" />
                 </a>
               </div>
