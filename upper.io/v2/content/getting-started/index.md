@@ -1,6 +1,6 @@
 # upper.io/db.v2
 
-![upper.io/db.v2 package](/db/res/general.png)
+![upper.io/db.v2 package](/db.v2/res/general.png)
 
 The `upper.io/db.v2` package for [Go][1] provides a *common interface* to work
 with different data sources using *adapters* that wrap mature database drivers.
@@ -23,7 +23,7 @@ databases and provides partial support (CRUD, no transactions) for
 `db` centers around the concept of sets. A collection (or table) represents a
 set that contains data items (or rows).
 
-![Database](/db/res/database.png)
+![Database](/db.v2/res/database.png)
 
 In the following example we load the `people` slice with all the elements from
 the "people" collection whose "name" field (or column) equals the value "Max".
@@ -99,7 +99,7 @@ err = res.Remove()
 ...
 ```
 
-![Collections](/db/res/collection.png)
+![Collections](/db.v2/res/collection.png)
 
 A result set cannot be used to add an item to the collection, because a it can
 only define a subset of rows that already exists. If you wanted to add a row to
@@ -175,16 +175,16 @@ go get -v -u upper.io/db.v2
 The `db` package provides basic functions and interfaces but you'll also need a
 **database adapter** in order to actually communicate with a database.
 
-![Adapters](/db/res/adapters.png)
+![Adapters](/db.v2/res/adapters.png)
 
 Here's the list of currently supported adapters, make sure to read the
 instructions from the specific adapter for installation instructions:
 
-* [MySQL](/db/mysql/)
-* [MongoDB](/db/mongo)
-* [PostgreSQL](/db/postgresql)
-* [QL](/db/ql)
-* [SQLite](/db/sqlite/)
+* [MySQL](/db.v2/mysql/)
+* [MongoDB](/db.v2/mongo)
+* [PostgreSQL](/db.v2/postgresql)
+* [QL](/db.v2/ql)
+* [SQLite](/db.v2/sqlite/)
 
 ## Quick start
 
@@ -513,7 +513,7 @@ accept more commands.
 
 ## Examples
 
-See code examples and patterns at our [examples](/db/examples) page.
+See code examples and patterns at our [examples](/db.v2/examples) page.
 
 ## Tips and tricks
 

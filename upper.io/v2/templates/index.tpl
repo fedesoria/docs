@@ -102,36 +102,49 @@
             </p>
             <div class="features grid-3">
               <div class="feature">
-                <h2 class="feature__title">Getting started</h2>
+                <h2 class="feature__title">{{ anchor "/getting-started" "Getting started" }}</h2>
                 <p class="feature__description">
                   {{ anchor "/getting-started" "Let's work"}} with databases
                   in a less tedious and more productive way.
                 </p>
                 <a href="{{ asset "/getting-started" }}">
-                <img class="feature__icon" src="{{ asset "images/figure-01.svg" }}" />
+                  <img class="feature__icon" src="{{ asset "images/figure-01.svg" }}" />
                 </a>
               </div>
               <div class="feature">
-                <h2 class="feature__title">Code examples</h2>
+                <h2 class="feature__title">{{ anchor "/examples" "Code examples" }}</h2>
                 <p class="feature__description">
                   Learn how to implement common patterns with our
                   {{ anchor "/examples" "code examples" }}
                 </p>
                 <a href="{{ asset "/examples" }}">
-                <img class="feature__icon" src="{{ asset "images/figure-02.svg" }}" />
+                  <img class="feature__icon" src="{{ asset "images/figure-02.svg" }}" />
                 </a>
               </div>
               <div class="feature">
-                <h2 class="feature__title">Contribute</h2>
+                <h2 class="feature__title">{{ anchor "/contribute" "Contribute" }}</h2>
                 <p class="feature__description">
                   Get your hands dirty and {{ anchor "/contribute" "contribute" }}
-                  with code, examples or documentation.
+                  with code, examples and documentation.
                 </p>
                 <a href="{{ asset "/contribute" }}">
                   <img class="feature__icon" src="{{ asset "images/figure-03.svg" }}" />
                 </a>
               </div>
             </div>
+            <h2>Playground</h2>
+            <p>
+              <pre><code class="lang-bash hljs">go get upper.io/db.v2
+cd $GOPATH/upper.io/db.v2/_example
+go run</code></pre>
+            </p>
+            <h2>Want to keep learning?</h2>
+            <p>
+              The best way to start learning is by reading our {{ anchor "/getting-started" "getting started" }} page.
+            </p>
+            <p>
+              Oh hai, still there? You may be looking for {{ anchor "/db.v1" "v1" }}.
+            </p>
           {{ else }}
 
             {{ if .Content }}
