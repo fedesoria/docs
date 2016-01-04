@@ -6,17 +6,40 @@ This is the perfect page to go after reading the [getting started][1] page.
 
 ### Typical mapping
 
-
 ```go
-type User struct {
-  ID         uint64 `db:"id,omitempty"` // `omitempty` skips ID when zero
-  FirstName  string `db:"first_name"`
-  LastName   string `db:"last_name"`
+type Employee struct {
+  ID         uint64         `db:"id,omitempty"` // `omitempty` skips ID when zero
+  FirstName  sql.NullString `db:"first_name"`
+  LastName   string         `db:"last_name"`
 }
 ```
 
-Using the `omitempty` option on the "id" tag skips the field when it has the
-zero value, that prevents the database from thinking that "0" is an ID.
+Use `omitempty` on fields that auto increment themselves on INSERT if no value
+is set, like IDs.
+
+<div>
+<textarea class="go-playground-snippet" data-title="Example: A list of employees">{{ include "webroot/examples/mapping-employees/main.go" }}</textarea>
+</div>
+
+<div>
+<textarea class="go-playground-snippet" data-title="Example: Get the employee with a NULL name.">{{ include "webroot/examples/mapping-employees-null-field/main.go" }}</textarea>
+</div>
+
+Try to use the field type you want and `db` will try its best to convert from
+the storage format into a Go type.
+
+```go
+type Shipment struct {
+  ID         int       `db:"id,omitempty"`
+  CustomerID int       `db:"customer_id"`
+  ISBN       string    `db:"isbn"`
+  ShipDate   time.Time `db:"ship_date"` // Using a time value.
+}
+```
+
+<div>
+<textarea class="go-playground-snippet" data-title="Example: List all shipments from September 2001.">{{ include "webroot/examples/list-shipments/main.go" }}</textarea>
+</div>
 
 ### Embedded struct
 

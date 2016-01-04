@@ -3,7 +3,14 @@
   <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <link href="https://fonts.googleapis.com/css?family=Raleway:500,700|Source+Serif+Pro:400,700|Source+Code+Pro:400,600" rel="stylesheet" type="text/css" />
+    <link href="//fonts.googleapis.com/css?family=Raleway:500,700|Source+Serif+Pro:400,700|Source+Code+Pro:400,600" rel="stylesheet" type="text/css" />
+
+    <link href="https://demo.upper.io/static/example.css" rel="stylesheet" type="text/css" />
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+    <script src="https://demo.upper.io/static/playground.js"></script>
+    <script src="https://demo.upper.io/static/snippets.js"></script>
+
     <link href="{{ asset "/css/style.css" }}" rel="stylesheet" />
     <link href="{{ asset "/css/syntax.css" }}" rel="stylesheet">
     <title>
@@ -24,6 +31,16 @@
     <link rel="stylesheet" href="//menteslibres.net/static/highlightjs/styles/default.css?v0000">
     <script src="//menteslibres.net/static/highlightjs/highlight.pack.js?v0000"></script>
     <script>hljs.initHighlightingOnLoad();</script>
+
+    <script>
+    goPlaygroundOptions({
+      'shareRedirect': 'https://demo.upper.io/p/',
+      'shareURL': 'https://demo.upper.io/share',
+      'compileURL': 'https://demo.upper.io/compile',
+      'fmtURL': 'https://demo.upper.io/fmt',
+      'shareOpenNewWindow': true
+    });
+    </script>
 
     <script src="{{asset "/js/main.js"}}"></script>
   </head>
@@ -132,18 +149,16 @@
                 </a>
               </div>
             </div>
-            <h2>Playground</h2>
+            <h2>A few examples</h2>
+            <textarea class="go-playground-snippet" data-expanded="1" data-title="Live Example: Opening a database and listing table rows">{{ include "webroot/examples/open/main.go" }}</textarea>
+            <textarea class="go-playground-snippet" data-title="Live Example: Same as above but using the SQL builder">{{ include "webroot/examples/builder/main.go" }}</textarea>
+            <textarea class="go-playground-snippet" data-title="Live Example: Building a JOIN statement">{{ include "webroot/examples/join/main.go" }}</textarea>
             <p>
-              <pre><code class="lang-bash hljs">go get upper.io/db.v2
-cd $GOPATH/upper.io/db.v2/_example
-go run</code></pre>
+              We have plenty of {{ anchor "/examples" "code examples" }} you can continue looking at.
             </p>
-            <h2>Want to keep learning?</h2>
+            <h2>Want to keep on learning?</h2>
             <p>
-              The best way to start learning is by reading our {{ anchor "/getting-started" "getting started" }} page.
-            </p>
-            <p>
-              Oh hai, still there? You may be looking for {{ anchor "/db.v1" "v1" }}.
+              The best way to keep on learning is by reading our {{ anchor "/getting-started" "getting started" }} page.
             </p>
           {{ else }}
 
