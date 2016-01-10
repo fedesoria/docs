@@ -7,14 +7,14 @@ import (
 	"upper.io/db.v2/postgresql" // Imports the postgresql adapter.
 )
 
-var settings = postgresql.ConnectionURL{
-	Database: `booktown`, // Database name.
-	Address:  db.ParseAddress(`demo.upper.io`),
-	User:     `demouser`, // Database username.
-	Password: `demop4ss`, // Database password.
-}
+const connectDSN = `postgres://demouser:demop4ss@demo.upper.io/booktown`
 
 func main() {
+	settings, err := postgresql.ParseURL(connectDSN)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	sess, err := db.Open("postgresql", settings)
 	if err != nil {
 		log.Fatal(err)

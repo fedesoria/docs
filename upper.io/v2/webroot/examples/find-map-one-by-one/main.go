@@ -14,6 +14,13 @@ var settings = postgresql.ConnectionURL{
 	Password: `demop4ss`, // Database password.
 }
 
+// Customer
+type Customer struct {
+	ID        uint   `db:"id"`
+	FirstName string `db:"first_name"`
+	LastName  string `db:"last_name"`
+}
+
 func main() {
 	sess, err := db.Open("postgresql", settings)
 	if err != nil {
@@ -22,5 +29,20 @@ func main() {
 
 	defer sess.Close()
 
-	log.Println("Now you're connected to the database!")
+	res := sess.C("customers").Find().Sort("last_name")
+	defer res.Close()
+
+	log.Println("Our customers:")
+
+	for {
+		var customer Customer
+		if err := res.Next(&customer); err != nil {
+			if err != db.ErrNoMoreRows {
+				log.Fatal(err)
+			}
+			break
+		}
+		log.Printf("%d: %s, %s\n", customer.ID, customer.LastName, customer.FirstName)
+	}
+
 }

@@ -22,5 +22,10 @@ func main() {
 
 	defer sess.Close()
 
-	log.Println("Now you're connected to the database!")
+	howManyBooks, err := sess.C("books").Find().Count()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	log.Printf("We have %d books in our database.\n", howManyBooks)
 }
