@@ -1,4 +1,4 @@
-FROM xiam/luminos
+FROM menteslibres/luminos
 
 COPY settings.yaml /etc/settings.yaml
 
