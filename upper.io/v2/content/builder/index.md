@@ -1,22 +1,18 @@
-# upper.io/builder
+# builder
 
-`upper.io/builder` is a [Go][1] package that provides tools to generate SQL
+`builder` is a [Go][1] package that provides tools for generating SQL
 statements for different databases using Go expressions.
 
-The `builder` package is the backbone of [upper.io/db][2].
+The `builder` package is the backbone of `db`.
 
 ## Creating a builder
 
-You can get a builder using the `Builder()` method on a `db.Database` object.
+Get a SQL builder using the `Builder()` method on a `db.Database` object.
 
 ```go
 b = sess.Builder()
 ...
 ```
-
-It is very easy to use `builder` and `db` together but `builder` does not
-depend on `db`, if you would like to use `builder` to power your database
-library you may want to check out the [repo at github][3].
 
 ## SELECT
 
@@ -26,7 +22,7 @@ Use the `Select()` method on a buider to begin a SELECT statement:
 q = b.Select("id", "name") // select from where?
 ```
 
-If you compiled the select statement at that point it would look like `SELECT
+If you compiled the select statement at this point it would look like `SELECT
 "id", "name";` which is kind of incomplete, you still need to specify which
 table to select from:
 
@@ -34,7 +30,7 @@ table to select from:
 q = b.Select("id", "name").From("accounts")
 ```
 
-At this point you have a complete query that can be compiled and executed:
+Now have a complete query that can be compiled and executed into valid SQL:
 
 ```
 var accounts []Account
@@ -46,7 +42,7 @@ err = q.Iterator().All(&accounts)
 ...
 ```
 
-You can also use `One()` instead of `All()` to map only one result:
+You can also `One()` instead of `All()` to map only one result:
 
 ```go
 var account Account
@@ -55,8 +51,8 @@ err = q.Iterator().One(&account)
 ...
 ```
 
-`builder.Iterator` also provides a `Next()` method that you can use to iterate
-one-by-one over large sets of result:
+`builder.Iterator` provides a `Next()` method that you can use to iterate over
+large sets of result:
 
 ```go
 var account Account
@@ -91,8 +87,8 @@ err = q.Exec()
 ...
 ```
 
-You can also omit the `Columns()` method call and pass a map or a struct to
-`Values()`:
+You can omit the `Columns()` method pass a map or a struct to `Values()`
+directly:
 
 ```go
 account := Account{
@@ -192,7 +188,8 @@ res, err = b.Exec(`DELETE FROM accounts WHERE id = ?`, 5)
 ...
 ```
 
-Create an iterator with any `*sql.Rows` value and map the results:
+`Query` returns a `*sql.Rows` object that you can use to map the results into a
+variable:
 
 ```go
 rows, err = b.Query(`SELECT * FROM accounts WHERE last_name = ?`, "Smith")
@@ -206,7 +203,7 @@ err = iter.All(&accounts)
 
 ## Conditions
 
-The `Where()` method can be used to define conditions on a stateent and it can
+The `Where()` method can be used to define conditions on a statement and it can
 be chained easily to the `Selector`, `Deleter` and `Updater` interfaces:
 
 Let's suppose we have a `Selector`:
@@ -278,6 +275,7 @@ q.Where(db.Or(
 ))
 ```
 
+`builder` is the perfect tool when you need more than simple CRUD.
+
 [1]: https://golang.org
-[2]: https://upper.io/db
-[3]: https://github.com/upper/builder
+[2]: https://upper.io/db.v2

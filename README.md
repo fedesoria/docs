@@ -1,8 +1,10 @@
-# upper.io docs
+# The upper.io documentation site
+
+This is the documentation site for `upper.io`.
 
 ## How to install and run
 
-Install [luminos](menteslibres.net/luminos):
+Install dependencies with `make deps`:
 
 ```
 make deps
@@ -14,19 +16,26 @@ Run the server:
 make run
 ```
 
-And open 127.0.0.1:9000.
+And open `127.0.0.1:9000`.
 
-## Directory layout
+Editable files are under the `upper.io` directory, you'll find `default`, `v1`
+and `v2` subdirectories inside.
 
-Some important files and directories:
+Each one of the subdirectories follows a simple structure:
 
-```sh
-# Main page template
-sites/default/templates/index.tpl
+```
+content/
+templates/
+webroot/
+site.yaml
+```
 
-# Web root
-sites/default/webroot
+You'll find markdown files under the `content/` subdirectory.
 
-# Markdown files
-sites/default/content
+## Using docker
+
+You can also run this site with docker:
+
+```
+make docker-run
 ```

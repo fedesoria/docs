@@ -2,7 +2,7 @@ deps:
 	go get -d -v menteslibres.net/luminos
 
 run:
-	luminos -c settings-local.yaml run
+	luminos -c settings.yaml run
 
 docker:
 	docker build -t upper/docs .

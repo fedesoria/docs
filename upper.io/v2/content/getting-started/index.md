@@ -16,26 +16,27 @@ import(
 databases and provides partial support (CRUD, no transactions) for
 [MongoDB][7].
 
+The main purpose of `db` is to abstract common database operations while
+providing means for advanced database features, nothing else.
+
 ## Introduction
 
-### What's the idea behind `upper.io/db.v2`?
+### What's the idea behind `db`?
 
 `db` centers around the concept of sets. A collection (or table) represents a
 set that contains data items (or rows).
 
 ![Database](/db.v2/res/database.png)
 
-In the following example we load the `people` slice with all the elements from
-the "people" collection whose "name" field (or column) equals the value "Max".
-
 ### Differences from v1
 
-1. v2 has a query builder.
-1. `db.And()`, `db.Or()`, `db.Func()` and `db.Raw()` are now functions.
+1. `v2` comes with a SQL query builder.
+1. `db.And()`, `db.Or()`, `db.Func()` and `db.Raw()` are functions instead of
+   structs.
 1. `db.Session.Collection()` only accepts one table.
 1. JOIN capabilities where removed from `Find()` (in favour of `Builder()`).
 
-### How to install v2?
+### How to install
 
 Use `go get` to pull the package:
 
@@ -43,7 +44,7 @@ Use `go get` to pull the package:
 go get -v upper.io/db.v2
 ```
 
-If the above command does not work for some reason, you can also pull the
+If the above command does not work for some reason, you can always pull the
 source directly from GitHub:
 
 ```sh
@@ -101,9 +102,7 @@ err = res.Remove()
 
 ![Collections](/db.v2/res/collection.png)
 
-A result set cannot be used to add an item to the collection, because a it can
-only define a subset of rows that already exists. If you wanted to add a row to
-the collection you can use the `Append()` method on it:
+To add an element to the collection you can use the `Append()` method on it:
 
 ```go
 person = Person{
@@ -126,8 +125,7 @@ id, _ = nid.(int64)
 
 The simple CRUD operations described above may come in handy for getting and
 saving data from different databases, but what if you wanted to use custom
-queries on SQL databases? It is also easy, you can just use the same SQL
-builder that powers `db`:
+queries on SQL databases? You use the query builder:
 
 ```go
 bob = sess.Builder()
@@ -141,8 +139,8 @@ err = q.Iterator().All(&accounts)
 ...
 ```
 
-If you think the SQL builder methods are not flexible enough you can also use
-raw SQL:
+If you think that the SQL builder methods are not flexible enough you can use
+raw SQL instead:
 
 ```go
 bob = sess.Builder()
@@ -162,7 +160,7 @@ working with databases less tedious and more productive.
 ## Installation
 
 The `upper.io/db.v2` package depends on the [Go compiler and tools][2] and it's
-compatible with Go 1.1 and above.
+compatible with Go 1.4 and above.
 
 Use `go get` to download `db`:
 
