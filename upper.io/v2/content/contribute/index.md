@@ -29,7 +29,7 @@ merged into the main repository.
 
 [1]: https://github.com/upper/db
 [2]: https://github.com/upper/db/issues
-[3]: https://github.com/upper/site
-[4]: https://github.com/upper/db-docs/issues
+[3]: https://github.com/upper/docs
+[4]: https://github.com/upper/docs/issues
 [5]: https://help.github.com/articles/fork-a-repo
 [6]: https://help.github.com/articles/fork-a-repo#pull-requests

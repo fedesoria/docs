@@ -1,6 +1,6 @@
 FROM menteslibres/luminos
 
-COPY settings.yaml /etc/settings.yaml
+COPY settings.prod.yaml /etc/settings.yaml
 
 EXPOSE 9000
 
