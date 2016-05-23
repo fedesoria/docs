@@ -2,7 +2,7 @@
 
 ## How to install and run
 
-Install [luminos](menteslibres.net/luminos):
+Install [luminos](https://menteslibres.net/luminos/):
 
 ```
 make deps
